@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CowboyShop - ชุดเซ็ตคาวบอยสุดเท่{% endblock %}</title>
+    <!-- ใช้ Tailwind CSS สำหรับการจัดเลย์เอาต์ที่รวดเร็วและสวยงาม -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: เลือกฟอนต์ที่มีหัว (Serif) ให้ความรู้สึกสไตล์วินเทจ/คาวบอย -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #fdf8f2; /* สีพื้นหลังครีมอ่อนๆ */
+        }
+        .western-font {
+            font-family: 'Playfair+Display', serif;
+        }
+        .cowboy-brown {
+            background-color: #5d4037; /* สีน้ำตาลเข้มแบบหนัง */
+        }
+        .cowboy-accent {
+            color: #a1887f;
+        }
+        .btn-western {
+            background-color: #8d6e63;
+            transition: all 0.3s ease;
+        }
+        .btn-western:hover {
+            background-color: #5d4037;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- แถบเมนูหลัก (Navigation Bar) -->
+    <nav class="cowboy-brown text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <!-- โลโก้ตามที่ระบุใน PDF -->
+                <div class="flex-shrink-0">
+                    <a href="/" class="western-font text-3xl font-bold tracking-wider">
+                        COWBOYSHOP 🤠
+                    </a>
+                </div>
+
+                <!-- เมนูตรงกลาง -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-6">
+                        <a href="/" class="hover:text-orange-200 px-3 py-2 rounded-md text-sm font-medium">หน้าแรก</a>
+                        <a href="/category" class="hover:text-orange-200 px-3 py-2 rounded-md text-sm font-medium">หมวดหมู่สินค้า</a>
+                        <a href="#" class="hover:text-orange-200 px-3 py-2 rounded-md text-sm font-medium">โปรโมชั่นเซ็ต</a>
+                    </div>
+                </div>
+
+                <!-- ปุ่ม Login ตามแบบหน้า 1 -->
+                <div>
+                    <a href="/login" class="bg-white text-stone-800 px-6 py-2 rounded-full font-bold hover:bg-orange-100 transition duration-300">
+                        Login
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ส่วนเนื้อหาที่จะเปลี่ยนไปตามแต่ละหน้า (Block Content) -->
+    <main class="flex-grow container mx-auto px-4 py-8">
+        {% block content %}
+        <!-- เนื้อหาจากหน้า Home.html หรือ Cat.html จะมาแสดงตรงนี้ -->
+        <div class="text-center py-20">
+            <h1 class="text-4xl font-bold text-stone-700 mb-4">ยินดีต้อนรับสู่ CowboyShop</h1>
+            <p class="text-stone-500">กำลังโหลดเนื้อหาที่น่าสนใจสำหรับคุณ...</p>
+        </div>
+        {% endblock %}
+    </main>
+
+    <!-- ส่วนท้ายของเว็บ (Footer) -->
+    <footer class="bg-stone-900 text-stone-400 py-10">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="western-font text-xl text-white mb-2">CowboyShop Official</p>
+            <p class="text-sm">แหล่งรวมชุดเซ็ตคาวบอยที่ครบครันที่สุด</p>
+            <div class="mt-4 flex justify-center space-x-4">
+                <span>Facebook</span>
+                <span>Line</span>
+                <span>Instagram</span>
+            </div>
+            <p class="mt-8 text-xs opacity-50">&copy; 2024 CowboyShop Project. จัดการโดย Django & Supabase</p>
+        </div>
+    </footer>
+
+</body>
+</html>
