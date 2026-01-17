@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}หมวดหมู่สินค้า - CowboyShop{% endblock %}
+
+{% block content %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cowboyshop - สินค้า</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Sarabun', sans-serif; }</style>
+</head>
+<body class="bg-amber-50 text-gray-800 flex flex-col min-h-screen">
+
+    <!-- Navbar (เหมือนเดิม) -->
+    <nav class="bg-amber-900 text-amber-50 shadow-lg sticky top-0 z-50 border-b-4 border-amber-950">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between h-20">
+                <a href="/" class="flex items-center">
+                    <div class="bg-amber-100 p-2 rounded-full border-2 border-amber-700 mr-2">
+                        <i data-lucide="star" class="h-6 w-6 text-amber-800 fill-current"></i>
+                    </div>
+                    <span class="font-serif text-2xl font-bold tracking-wider text-amber-100">COWBOY<span class="text-amber-400">SHOP</span></span>
+                </a>
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="/" class="flex items-center px-4 py-2 rounded-md text-sm font-medium text-amber-200 hover:bg-amber-800 hover:text-white transition"><i data-lucide="home" class="h-4 w-4 mr-2"></i> หน้าแรก</a>
+                    <a href="/product" class="flex items-center px-4 py-2 rounded-md text-sm font-medium bg-amber-800 text-white shadow-inner border border-amber-700"><i data-lucide="shopping-bag" class="h-4 w-4 mr-2"></i> สินค้า</a>
+                    <a href="/chat" class="flex items-center px-4 py-2 rounded-md text-sm font-medium text-amber-200 hover:bg-amber-800 hover:text-white transition"><i data-lucide="message-circle" class="h-4 w-4 mr-2"></i> แชท</a>
+                    <a href="/login" class="flex items-center px-4 py-2 rounded-md text-sm font-medium text-amber-200 hover:bg-amber-800 hover:text-white transition"><i data-lucide="user" class="h-4 w-4 mr-2"></i> เข้าสู่ระบบ</a>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="text-amber-200 hover:text-white focus:outline-none"><i data-lucide="menu" class="h-6 w-6"></i></button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-amber-800 border-t border-amber-900 p-2">
+            <a href="/" class="block px-3 py-3 rounded-md text-base font-medium text-amber-200 hover:bg-amber-700">หน้าแรก</a>
+            <a href="/product" class="block px-3 py-3 rounded-md text-base font-medium bg-amber-900 text-white">สินค้า</a>
+            <a href="/chat" class="block px-3 py-3 rounded-md text-base font-medium text-amber-200 hover:bg-amber-700">แชท</a>
+            <a href="/login" class="block px-3 py-3 rounded-md text-base font-medium text-amber-200 hover:bg-amber-700">เข้าสู่ระบบ</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 py-12 w-full">
+        <!-- Header & Filters -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
+            <h2 class="text-3xl font-serif font-bold text-amber-900 flex items-center">
+                <i data-lucide="shopping-bag" class="mr-3 h-8 w-8"></i> สินค้าทั้งหมด
+            </h2>
+            <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                <select id="categoryFilter" onchange="filterProducts()" class="p-2 rounded border border-amber-300 bg-white text-amber-900 outline-none focus:ring-2 focus:ring-amber-500">
+                    <option value="all">ทั้งหมด</option>
+                    <option value="หมวก">หมวก</option>
+                    <option value="รองเท้า">รองเท้า</option>
+                    <option value="เสื้อผ้า">เสื้อผ้า</option>
+                    <option value="เครื่องประดับ">เครื่องประดับ</option>
+                    <option value="อุปกรณ์">อุปกรณ์</option>
+                </select>
+                <div class="relative">
+                    <input type="text" id="searchInput" onkeyup="filterProducts()" placeholder="ค้นหาสินค้า..." class="pl-10 pr-4 py-2 w-full rounded border border-amber-300 outline-none focus:ring-2 focus:ring-amber-500">
+                    <i data-lucide="search" class="absolute left-3 top-2.5 h-4 w-4 text-gray-400"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Products will be injected by JS -->
+        </div>
+    </div>
+
+    <footer class="bg-amber-950 text-amber-200/60 py-8 border-t border-amber-900 mt-auto text-center">
+        <p class="text-sm">© 2024 Cowboyshop. All rights reserved.</p>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        // ข้อมูลสินค้า (Mock Data)
+        const products = [
+            { id: 1, name: "หมวกคาวบอยหนังแท้", category: "หมวก", price: 2500, image: "https://images.unsplash.com/photo-1559563458-52c69f8f1f6c?auto=format&fit=crop&q=80&w=800", desc: "หมวกหนังแท้สีน้ำตาล ทนทาน" },
+            { id: 2, name: "รองเท้าบูทตะวันตก", category: "รองเท้า", price: 4500, image: "https://images.unsplash.com/photo-1534963503144-8d48b10bc6a9?auto=format&fit=crop&q=80&w=800", desc: "รองเท้าบูทหนังแกะสลักลวดลาย" },
+            { id: 3, name: "เสื้อเชิ้ตลายสก๊อต", category: "เสื้อผ้า", price: 1200, image: "https://images.unsplash.com/photo-1534653299134-96a171b61581?auto=format&fit=crop&q=80&w=800", desc: "เสื้อเชิ้ตผ้าฝ้ายระบายอากาศดี" },
+            { id: 4, name: "เข็มขัดหัวกระทิง", category: "เครื่องประดับ", price: 1800, image: "https://images.unsplash.com/photo-1624222247344-550fb60583dc?auto=format&fit=crop&q=80&w=800", desc: "เข็มขัดหนังเกรดพรีเมียม" },
+            { id: 5, name: "แจ็คเก็ตยีนส์", category: "เสื้อผ้า", price: 3200, image: "https://images.unsplash.com/photo-1605908502724-9093a79a1b39?auto=format&fit=crop&q=80&w=800", desc: "แจ็คเก็ตยีนส์ฟอกสี สไตล์วินเทจ" },
+            { id: 6, name: "เชือกบ่วงบาศ", category: "อุปกรณ์", price: 850, image: "https://images.unsplash.com/photo-1599596373756-3c58b4566c1b?auto=format&fit=crop&q=80&w=800", desc: "เชือกคุณภาพสูงสำหรับการฝึกซ้อม" }
+        ];
+
+        function renderProducts(items) {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = items.map(p => `
+                <div class="bg-white rounded-lg overflow-hidden shadow-lg border border-amber-200 flex flex-col hover:shadow-2xl transition-shadow duration-300">
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                        <div class="absolute top-4 right-4 bg-amber-600 text-white text-xs font-bold px-2 py-1 rounded shadow">${p.category}</div>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">${p.name}</h3>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">${p.desc}</p>
+                        <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
+                            <span class="text-2xl font-bold text-amber-800">฿${p.price.toLocaleString()}</span>
+                        </div>
+                        <div class="mt-4 grid grid-cols-2 gap-3">
+                            <button onclick="alert('เพิ่ม ${p.name} ลงในตะกร้าแล้ว')" class="flex items-center justify-center bg-amber-700 hover:bg-amber-800 text-white py-2 px-4 rounded font-medium transition-colors">ซื้อสินค้า</button>
+                            <button onclick="alert('จองสินค้า ${p.name} แล้ว')" class="flex items-center justify-center bg-transparent border-2 border-amber-700 text-amber-900 hover:bg-amber-50 py-2 px-4 rounded font-medium transition-colors">
+                                <i data-lucide="clock" class="w-4 h-4 mr-1"></i> จอง
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function filterProducts() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+            
+            const filtered = products.filter(p => {
+                const matchSearch = p.name.toLowerCase().includes(searchText);
+                const matchCat = category === 'all' || p.category === category;
+                return matchSearch && matchCat;
+            });
+            renderProducts(filtered);
+        }
+
+        // Initial Render
+        renderProducts(products);
+    </script>
+</body>
+
+{% endblock %}

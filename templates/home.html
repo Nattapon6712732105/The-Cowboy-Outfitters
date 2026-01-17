@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cowboyshop - หน้าแรก</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Sarabun', sans-serif; }
+        .font-serif { font-family: 'Times New Roman', serif; }
+        .text-shadow { text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+    </style>
+</head>
+<body class="bg-amber-50 text-gray-800 flex flex-col min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="bg-amber-900 text-amber-50 shadow-lg sticky top-0 z-50 border-b-4 border-amber-950">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between h-20">
+                <a href="/" class="flex items-center">
+                    <div class="bg-amber-100 p-2 rounded-full border-2 border-amber-700 mr-2">
+                        <i data-lucide="star" class="h-6 w-6 text-amber-800 fill-current"></i>
+                    </div>
+                    <span class="font-serif text-2xl font-bold tracking-wider text-amber-100 drop-shadow-md">
+                        COWBOY<span class="text-amber-400">SHOP</span>
+                    </span>
+                </a>
+                
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="/" class="flex items-center px-4 py-2 rounded-md text-sm font-medium bg-amber-800 text-white shadow-inner border border-amber-700">
+                        <i data-lucide="home" class="h-4 w-4 mr-2"></i> หน้าแรก
+                    </a>
+                    <a href="/product" class="flex items-center px-4 py-2 rounded-md text-sm font-medium text-amber-200 hover:bg-amber-800 hover:text-white transition">
+                        <i data-lucide="shopping-bag" class="h-4 w-4 mr-2"></i> สินค้า
+                    </a>
+                    <a href="/chat" class="flex items-center px-4 py-2 rounded-md text-sm font-medium text-amber-200 hover:bg-amber-800 hover:text-white transition">
+                        <i data-lucide="message-circle" class="h-4 w-4 mr-2"></i> แชท
+                    </a>
+                    <a href="/login" class="flex items-center px-4 py-2 rounded-md text-sm font-medium text-amber-200 hover:bg-amber-800 hover:text-white transition">
+                        <i data-lucide="user" class="h-4 w-4 mr-2"></i> เข้าสู่ระบบ
+                    </a>
+                    <!-- ปุ่มพนักงาน (ซ่อนไว้หรือแสดงตามต้องการ) -->
+                    <!-- <a href="employee.html" class="text-amber-200 hover:text-white"><i data-lucide="briefcase" class="h-4 w-4"></i></a> -->
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="text-amber-200 hover:text-white focus:outline-none">
+                        <i data-lucide="menu" class="h-6 w-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-amber-800 border-t border-amber-900 p-2">
+            <a href="index.html" class="block px-3 py-3 rounded-md text-base font-medium bg-amber-900 text-white">หน้าแรก</a>
+            <a href="products.html" class="block px-3 py-3 rounded-md text-base font-medium text-amber-200 hover:bg-amber-700">สินค้า</a>
+            <a href="chat.html" class="block px-3 py-3 rounded-md text-base font-medium text-amber-200 hover:bg-amber-700">แชท</a>
+            <a href="login.html" class="block px-3 py-3 rounded-md text-base font-medium text-amber-200 hover:bg-amber-700">เข้าสู่ระบบ</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="relative bg-amber-900 h-[500px] flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 opacity-40 bg-[url('https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&q=80&w=1920')] bg-cover bg-center mix-blend-overlay"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-amber-950 via-transparent to-transparent"></div>
+        
+        <div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
+            <div class="inline-block p-4 border-4 border-double border-amber-400/50 rounded-lg bg-black/30 backdrop-blur-sm mb-6">
+                <h1 class="text-5xl md:text-7xl font-serif font-bold text-amber-100 tracking-widest text-shadow">
+                    COWBOY<br /><span class="text-amber-500">SHOP</span>
+                </h1>
+            </div>
+            <p class="mt-4 text-xl md:text-2xl text-amber-200 font-light max-w-2xl mx-auto drop-shadow-md">
+                แหล่งรวมสินค้าคาวบอยคุณภาพเยี่ยม เครื่องหนังแท้ และอุปกรณ์ครบครัน
+            </p>
+            <div class="mt-8 flex justify-center gap-4">
+                <a href="products.html" class="px-8 py-3 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded border-b-4 border-amber-800 active:border-b-0 active:translate-y-1 transition-all shadow-lg text-lg uppercase tracking-wide">
+                    ดูรายการสินค้า
+                </a>
+                <a href="login.html" class="px-8 py-3 bg-transparent hover:bg-white/10 text-amber-100 font-bold rounded border-2 border-amber-400 transition-all shadow-lg text-lg uppercase tracking-wide backdrop-blur-sm">
+                    เข้าสู่ระบบ
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Categories -->
+    <div class="py-16 bg-amber-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-serif font-bold text-amber-900 border-b-2 border-amber-300 inline-block pb-2">
+                    ประเภทสินค้า
+                </h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Category 1 -->
+                <a href="products.html" class="group relative rounded-lg overflow-hidden shadow-xl h-64 cursor-pointer transform hover:-translate-y-2 transition-all duration-300">
+                    <img src="https://images.unsplash.com/photo-1473187983305-f615310e7daa?auto=format&fit=crop&q=80&w=500" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-6">
+                        <h3 class="text-2xl font-bold text-white mb-1">เครื่องหนัง</h3>
+                        <p class="text-amber-200">กระเป๋า เข็มขัด และรองเท้า</p>
+                    </div>
+                </a>
+                <!-- Category 2 -->
+                <a href="products.html" class="group relative rounded-lg overflow-hidden shadow-xl h-64 cursor-pointer transform hover:-translate-y-2 transition-all duration-300">
+                    <img src="https://images.unsplash.com/photo-1560243563-062bfc001d68?auto=format&fit=crop&q=80&w=500" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-6">
+                        <h3 class="text-2xl font-bold text-white mb-1">เสื้อผ้า</h3>
+                        <p class="text-amber-200">เสื้อเชิ้ต แจ็คเก็ต และกางเกง</p>
+                    </div>
+                </a>
+                <!-- Category 3 -->
+                <a href="products.html" class="group relative rounded-lg overflow-hidden shadow-xl h-64 cursor-pointer transform hover:-translate-y-2 transition-all duration-300">
+                    <img src="https://images.unsplash.com/photo-1575294628203-d2d48074d32f?auto=format&fit=crop&q=80&w=500" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-6">
+                        <h3 class="text-2xl font-bold text-white mb-1">หมวก</h3>
+                        <p class="text-amber-200">หมวกคาวบอยแท้ หลากหลายทรง</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-amber-950 text-amber-200/60 py-8 border-t border-amber-900 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="flex justify-center items-center mb-4">
+                 <i data-lucide="star" class="h-5 w-5 mr-2 text-amber-700"></i>
+                 <span class="font-serif font-bold text-amber-100">COWBOYSHOP</span>
+                 <i data-lucide="star" class="h-5 w-5 ml-2 text-amber-700"></i>
+            </div>
+            <p class="text-sm">© 2024 Cowboyshop. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
+{% endblock %}
