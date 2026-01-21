@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block title %}หมวดหมู่สินค้า - CowboyShop{% endblock %}
 
 {% block content %}
@@ -28,7 +28,6 @@
                 <div class="hidden md:flex items-center space-x-4">
                     <a href="/" class="flex items-center px-4 py-2 rounded-md text-sm font-medium text-amber-200 hover:bg-amber-800 hover:text-white transition"><i data-lucide="home" class="h-4 w-4 mr-2"></i> หน้าแรก</a>
                     <a href="/product" class="flex items-center px-4 py-2 rounded-md text-sm font-medium bg-amber-800 text-white shadow-inner border border-amber-700"><i data-lucide="shopping-bag" class="h-4 w-4 mr-2"></i> สินค้า</a>
-                    <a href="/chat" class="flex items-center px-4 py-2 rounded-md text-sm font-medium text-amber-200 hover:bg-amber-800 hover:text-white transition"><i data-lucide="message-circle" class="h-4 w-4 mr-2"></i> แชท</a>
                     <a href="/login" class="flex items-center px-4 py-2 rounded-md text-sm font-medium text-amber-200 hover:bg-amber-800 hover:text-white transition"><i data-lucide="user" class="h-4 w-4 mr-2"></i> เข้าสู่ระบบ</a>
                 </div>
                 <div class="md:hidden flex items-center">
@@ -39,7 +38,6 @@
         <div id="mobile-menu" class="hidden md:hidden bg-amber-800 border-t border-amber-900 p-2">
             <a href="/" class="block px-3 py-3 rounded-md text-base font-medium text-amber-200 hover:bg-amber-700">หน้าแรก</a>
             <a href="/product" class="block px-3 py-3 rounded-md text-base font-medium bg-amber-900 text-white">สินค้า</a>
-            <a href="/chat" class="block px-3 py-3 rounded-md text-base font-medium text-amber-200 hover:bg-amber-700">แชท</a>
             <a href="/login" class="block px-3 py-3 rounded-md text-base font-medium text-amber-200 hover:bg-amber-700">เข้าสู่ระบบ</a>
         </div>
     </nav>
@@ -70,6 +68,37 @@
         <!-- Product Grid -->
         <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- Products will be injected by JS -->
+        </div>
+    </div>
+
+    <!-- Chat Section (รวมไว้ด้านล่างสินค้า) -->
+    <div class="max-w-2xl mx-auto mb-12 px-4">
+        <div class="bg-white shadow-2xl rounded-xl overflow-hidden border border-amber-200 flex flex-col h-[400px]">
+            <!-- Header -->
+            <div class="bg-amber-800 p-4 flex items-center space-x-3 text-white shadow-md">
+                <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                    <i data-lucide="message-circle" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold">Cowboyshop Support</h3>
+                    <p class="text-xs text-amber-200 flex items-center"><span class="w-2 h-2 bg-green-400 rounded-full mr-1"></span> Online</p>
+                </div>
+            </div>
+            
+            <!-- Messages -->
+            <div id="chatMessages" class="flex-1 overflow-y-auto p-4 bg-amber-50 space-y-4">
+                <div class="flex justify-start">
+                    <div class="max-w-[70%] p-3 rounded-2xl shadow-sm bg-white text-gray-800 border border-gray-200 rounded-bl-none">
+                        ยินดีต้อนรับเข้าสู่ Cowboyshop! คุณต้องการความช่วยเหลืออะไรไหม?
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Input -->
+            <div class="border-t border-gray-200 p-4 bg-white flex gap-2">
+                <input type="text" id="chatInput" placeholder="พิมพ์ข้อความ..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
+                <button onclick="sendMessage()" class="bg-amber-800 text-white px-6 py-2 rounded-lg hover:bg-amber-700 transition font-medium">ส่ง</button>
+            </div>
         </div>
     </div>
 
@@ -105,7 +134,7 @@
                             <span class="text-2xl font-bold text-amber-800">฿${p.price.toLocaleString()}</span>
                         </div>
                         <div class="mt-4 grid grid-cols-2 gap-3">
-                            <button onclick="alert('เพิ่ม ${p.name} ลงในตะกร้าแล้ว')" class="flex items-center justify-center bg-amber-700 hover:bg-amber-800 text-white py-2 px-4 rounded font-medium transition-colors">ซื้อสินค้า</button>
+                            <button onclick="openShopModal(${p.id})" class="flex items-center justify-center bg-amber-700 hover:bg-amber-800 text-white py-2 px-4 rounded font-medium transition-colors">ซื้อสินค้า</button>
                             <button onclick="alert('จองสินค้า ${p.name} แล้ว')" class="flex items-center justify-center bg-transparent border-2 border-amber-700 text-amber-900 hover:bg-amber-50 py-2 px-4 rounded font-medium transition-colors">
                                 <i data-lucide="clock" class="w-4 h-4 mr-1"></i> จอง
                             </button>
@@ -130,6 +159,24 @@
 
         // Initial Render
         renderProducts(products);
+
+        // Chat Functions
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (message) {
+                const messagesDiv = document.getElementById('chatMessages');
+                const msgElement = document.createElement('div');
+                msgElement.className = 'flex justify-end';
+                msgElement.innerHTML = `<div class="max-w-[70%] p-3 rounded-2xl shadow-sm bg-amber-800 text-white border border-amber-700 rounded-br-none">${message}</div>`;
+                messagesDiv.appendChild(msgElement);
+                input.value = '';
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+        }
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendMessage();
+        });
     </script>
 </body>
 

@@ -15,3 +15,5 @@ def login(request):
 
 def chat(request):
     return render(request, "chat.html")
+def shop(request):
+    return render(request, "shop.html")

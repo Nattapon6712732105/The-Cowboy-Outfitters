@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}ร้านค้า - CowboyShop{% endblock %}
+
+{% block content %}
+
+<!-- Modal Overlay -->
+<div id="shopModal" class="hidden fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-4">
+    <!-- Modal Content -->
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-2xl border-4 border-amber-800">
+        <!-- Close Button -->
+        <button onclick="closeShopModal()" class="absolute top-4 right-4 z-50 bg-amber-700 hover:bg-amber-800 text-white p-2 rounded-full transition">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+
+        <div class="flex flex-col md:flex-row h-full">
+            <!-- Left Side - Product Image -->
+            <div class="md:w-1/2 bg-gradient-to-br from-amber-100 to-amber-200 p-8 flex flex-col justify-between">
+                <div class="text-center">
+                    <button onclick="toggleSaved()" class="inline-block mb-4 transition-transform hover:scale-110">
+                        <i id="starIcon" data-lucide="star" class="w-12 h-12 text-amber-600 fill-current"></i>
+                    </button>
+                </div>
+                <div class="flex-1 flex items-center justify-center">
+                    <img id="shopProductImage" src="" alt="สินค้า" class="w-full h-64 object-cover rounded-lg shadow-lg">
+                </div>
+                <div class="text-center mt-4">
+                    <p class="text-amber-900 font-medium text-sm">ซื้อสินค้า</p>
+                </div>
+            </div>
+
+            <!-- Right Side - Product Details -->
+            <div class="md:w-1/2 p-8 flex flex-col justify-between bg-amber-50">
+                <!-- Status Section -->
+                <div>
+                    <h2 class="text-2xl font-bold text-amber-900 mb-2">สถานะณะ</h2>
+                    <div id="shopProductName" class="text-lg font-semibold text-gray-800 mb-4"></div>
+                    <div class="bg-white border-2 border-amber-300 rounded-lg p-4 mb-6">
+                        <p class="text-gray-600 mb-2"><span class="font-medium">ประเภท:</span> <span id="shopProductCategory"></span></p>
+                        <p class="text-gray-600 mb-2"><span class="font-medium">รายละเอียด:</span> <span id="shopProductDesc"></span></p>
+                        <p class="text-2xl font-bold text-amber-800">ราคา: ฿<span id="shopProductPrice"></span></p>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="space-y-3">
+                    <button onclick="saveShopping()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-6 rounded-lg transition-all shadow-lg">
+                        ซื้อราคา
+                    </button>
+                    <button onclick="closeShopModal()" class="w-full bg-gray-400 hover:bg-gray-500 text-white font-bold py-3 px-6 rounded-lg transition-all">
+                        ยกเลิก
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    lucide.createIcons();
+    
+    let currentProduct = null;
+    let isSaved = false;
+
+    function openShopModal(productId) {
+        // ข้อมูลสินค้าทั้งหมด
+        const products = [
+            { id: 1, name: "หมวกคาวบอยหนังแท้", category: "หมวก", price: 2500, image: "https://images.unsplash.com/photo-1559563458-52c69f8f1f6c?auto=format&fit=crop&q=80&w=800", desc: "หมวกหนังแท้สีน้ำตาล ทนทาน" },
+            { id: 2, name: "รองเท้าบูทตะวันตก", category: "รองเท้า", price: 4500, image: "https://images.unsplash.com/photo-1534963503144-8d48b10bc6a9?auto=format&fit=crop&q=80&w=800", desc: "รองเท้าบูทหนังแกะสลักลวดลาย" },
+            { id: 3, name: "เสื้อเชิ้ตลายสก๊อต", category: "เสื้อผ้า", price: 1200, image: "https://images.unsplash.com/photo-1534653299134-96a171b61581?auto=format&fit=crop&q=80&w=800", desc: "เสื้อเชิ้ตผ้าฝ้ายระบายอากาศดี" },
+            { id: 4, name: "เข็มขัดหัวกระทิง", category: "เครื่องประดับ", price: 1800, image: "https://images.unsplash.com/photo-1624222247344-550fb60583dc?auto=format&fit=crop&q=80&w=800", desc: "เข็มขัดหนังเกรดพรีเมียม" },
+            { id: 5, name: "แจ็คเก็ตยีนส์", category: "เสื้อผ้า", price: 3200, image: "https://images.unsplash.com/photo-1605908502724-9093a79a1b39?auto=format&fit=crop&q=80&w=800", desc: "แจ็คเก็ตยีนส์ฟอกสี สไตล์วินเทจ" },
+            { id: 6, name: "เชือกบ่วงบาศ", category: "อุปกรณ์", price: 850, image: "https://images.unsplash.com/photo-1599596373756-3c58b4566c1b?auto=format&fit=crop&q=80&w=800", desc: "เชือกคุณภาพสูงสำหรับการฝึกซ้อม" }
+        ];
+
+        const product = products.find(p => p.id === productId);
+        if (!product) return;
+
+        currentProduct = product;
+        isSaved = false;
+
+        // Update modal content
+        document.getElementById('shopProductName').textContent = product.name;
+        document.getElementById('shopProductCategory').textContent = product.category;
+        document.getElementById('shopProductDesc').textContent = product.desc;
+        document.getElementById('shopProductPrice').textContent = product.price.toLocaleString();
+        document.getElementById('shopProductImage').src = product.image;
+
+        // Reset star icon
+        const starIcon = document.getElementById('starIcon');
+        starIcon.classList.add('text-amber-600');
+        starIcon.classList.remove('text-yellow-500');
+
+        // Show modal
+        document.getElementById('shopModal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeShopModal() {
+        document.getElementById('shopModal').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+        currentProduct = null;
+        isSaved = false;
+    }
+
+    function toggleSaved() {
+        isSaved = !isSaved;
+        const starIcon = document.getElementById('starIcon');
+        if (isSaved) {
+            starIcon.classList.remove('text-amber-600');
+            starIcon.classList.add('text-yellow-500');
+        } else {
+            starIcon.classList.add('text-amber-600');
+            starIcon.classList.remove('text-yellow-500');
+        }
+    }
+
+    function saveShopping() {
+        if (!currentProduct) return;
+        
+        if (isSaved) {
+            alert(`บันทึกการจอง: ${currentProduct.name} (${currentProduct.price} บาท)`);
+        } else {
+            alert(`ซื้อสินค้า: ${currentProduct.name} (${currentProduct.price} บาท)`);
+        }
+        closeShopModal();
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('shopModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeShopModal();
+        }
+    });
+</script>
+
+{% endblock %}
