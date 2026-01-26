@@ -1,0 +1,308 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}บัญชีของฉัน - CowboyShop{% endblock %}
+{% block content %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cowboyshop - บัญชีของฉัน</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Sarabun', sans-serif; }</style>
+</head>
+
+<body class="bg-amber-50 min-h-screen py-12">
+    <div class="max-w-6xl mx-auto px-4">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8 border-t-4 border-amber-800">
+            <h1 class="text-3xl font-bold text-amber-900 flex items-center">
+                <svg class="w-8 h-8 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+                บัญชีของฉัน
+            </h1>
+            <p class="text-gray-600 mt-2">ยินดีต้อนรับ <span class="font-bold">{{ user.first_name }} {{ user.last_name }}</span> ({{ user.email }})</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Profile Section -->
+            <div class="md:col-span-1">
+                <div class="bg-white rounded-lg shadow-lg p-6 border-l-4 border-amber-800 sticky top-20">
+                    <h2 class="text-xl font-bold text-amber-900 mb-6 flex items-center">
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        ข้อมูลบัญชี
+                    </h2>
+
+                    <form id="profileForm" class="space-y-6">
+                        {% csrf_token %}
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">ชื่อ-นามสกุล</label>
+                            <p class="text-gray-800 font-semibold">{{ user.first_name }} {{ user.last_name }}</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">อีเมล</label>
+                            <p class="text-gray-800 font-semibold">{{ user.email }}</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">เบอร์โทรศัพท์</label>
+                            <input type="tel" name="phone" value="{{ customer.phone }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none" placeholder="เบอร์โทรศัพท์">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">ที่อยู่</label>
+                            <textarea name="address" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none" placeholder="ที่อยู่สำหรับส่งของ">{{ customer.address }}</textarea>
+                        </div>
+
+                        <button type="submit" class="w-full bg-amber-800 hover:bg-amber-900 text-white font-bold py-2 px-4 rounded-lg transition flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            บันทึกข้อมูล
+                        </button>
+
+                        <div id="profileMessage" class="hidden bg-green-100 border-l-4 border-green-600 p-3 rounded">
+                            <p class="text-green-800 text-sm font-semibold">✓ บันทึกข้อมูลสำเร็จ</p>
+                        </div>
+                    </form>
+
+                    <hr class="my-6 border-amber-200">
+
+                    <div class="space-y-2">
+                        <a href="/product" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition text-center">
+                            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+                            สั่งซื้อสินค้า
+                        </a>
+                        <a href="/logout" class="block w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition text-center">
+                            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            </svg>
+                            ออกจากระบบ
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Section -->
+            <div class="md:col-span-2">
+                <div class="bg-white rounded-lg shadow-lg p-6 border-l-4 border-amber-800">
+                    <h2 class="text-xl font-bold text-amber-900 mb-6 flex items-center">
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                        </svg>
+                        คำสั่งซื้อของฉัน ({{ total_orders }})
+                    </h2>
+
+                    {% if orders %}
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead class="bg-amber-100 border-b-2 border-amber-800">
+                                    <tr>
+                                        <th class="text-left px-4 py-3 font-bold text-amber-900">เลขออเดอร์</th>
+                                        <th class="text-left px-4 py-3 font-bold text-amber-900">สินค้า</th>
+                                        <th class="text-center px-4 py-3 font-bold text-amber-900">จำนวน</th>
+                                        <th class="text-right px-4 py-3 font-bold text-amber-900">ราคา</th>
+                                        <th class="text-center px-4 py-3 font-bold text-amber-900">สถานะ</th>
+                                        <th class="text-center px-4 py-3 font-bold text-amber-900">วันที่</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in orders %}
+                                        <tr class="border-b border-gray-200 hover:bg-amber-50">
+                                            <td class="px-4 py-3 font-bold text-amber-900">
+                                                <button type="button" onclick="toggleDetails({{ order.id }})" class="text-blue-600 hover:underline">
+                                                    {{ order.order_id }}
+                                                </button>
+                                            </td>
+                                            <td class="px-4 py-3 text-gray-800">{{ order.product_name }}</td>
+                                            <td class="px-4 py-3 text-center">{{ order.quantity }}</td>
+                                            <td class="px-4 py-3 text-right font-bold">{{ order.total_price|floatformat:2 }} ฿</td>
+                                            <td class="px-4 py-3 text-center">
+                                                {% if order.status == 'pending' %}
+                                                    <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-bold">รอตรวจสอบ</span>
+                                                {% elif order.status == 'approved' %}
+                                                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold">อนุมัติแล้ว</span>
+                                                {% elif order.status == 'rejected' %}
+                                                    <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-bold">ปฏิเสธ</span>
+                                                {% elif order.status == 'shipped' %}
+                                                    <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-bold">จัดส่งแล้ว</span>
+                                                {% elif order.status == 'completed' %}
+                                                    <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-xs font-bold">สำเร็จ</span>
+                                                {% endif %}
+                                            </td>
+                                            <td class="px-4 py-3 text-center text-gray-600 text-xs">
+                                                {{ order.created_at|date:"d/m/Y" }}
+                                            </td>
+                                        </tr>
+                                        <!-- Details Row -->
+                                        <tr id="details-{{ order.id }}" class="hidden">
+                                            <td colspan="6" class="px-4 py-4 bg-amber-50">
+                                                <div class="grid md:grid-cols-2 gap-6">
+                                                    <div>
+                                                        <p class="text-sm font-semibold text-gray-700 mb-2">ข้อมูลออเดอร์:</p>
+                                                        <div class="space-y-1 text-sm text-gray-700">
+                                                            <p><strong>เลขออเดอร์:</strong> {{ order.order_id }}</p>
+                                                            <p><strong>ชื่อลูกค้า:</strong> {{ order.customer_name }}</p>
+                                                            <p><strong>เบอร์โทร:</strong> {{ order.customer_phone }}</p>
+                                                            <p><strong>เบอร์โทรธนาคาร:</strong> {{ customer.phone }}</p>
+                                                            <p><strong>ที่อยู่:</strong> {{ customer.address }}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm font-semibold text-gray-700 mb-2">รายละเอียดสินค้า:</p>
+                                                        <div class="space-y-1 text-sm text-gray-700">
+                                                            <p><strong>สินค้า:</strong> {{ order.product_name }}</p>
+                                                            <p><strong>จำนวน:</strong> {{ order.quantity }} ชิ้น</p>
+                                                            <p><strong>ราคาต่อหน่วย:</strong> {{ order.unit_price|floatformat:2 }} ฿</p>
+                                                            <p><strong>รวมทั้งสิ้น:</strong> <span class="font-bold text-lg text-amber-900">{{ order.total_price|floatformat:2 }} ฿</span></p>
+                                                            {% if order.notes %}
+                                                                <p><strong>หมายเหตุ:</strong> {{ order.notes }}</p>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                    {% if order.receipt_image %}
+                                                        <div>
+                                                            <p class="text-sm font-semibold text-gray-700 mb-2">สลีปโอนเงิน:</p>
+                                                            <img src="{{ order.receipt_image.url }}" alt="Receipt" class="rounded-lg border border-amber-300 max-h-48 object-cover">
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-12">
+                            <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <p class="text-gray-600 text-lg">ยังไม่มีคำสั่งซื้อ</p>
+                            <a href="/shop" class="mt-4 inline-block bg-amber-800 hover:bg-amber-900 text-white font-bold py-2 px-6 rounded-lg transition">
+                                สั่งซื้อสินค้าเลย
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Bookings Section -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden border-t-4 border-blue-600">
+                    <div class="bg-blue-600 text-white p-6">
+                        <h2 class="text-2xl font-bold flex items-center">
+                            <i data-lucide="clock" class="w-6 h-6 mr-2"></i>
+                            การจองสินค้า
+                        </h2>
+                    </div>
+                    
+                    {% if bookings %}
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-blue-50 border-b-2 border-blue-300">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-sm font-bold text-blue-900">รหัสการจอง</th>
+                                        <th class="px-6 py-3 text-left text-sm font-bold text-blue-900">สินค้า</th>
+                                        <th class="px-6 py-3 text-center text-sm font-bold text-blue-900">จำนวน</th>
+                                        <th class="px-6 py-3 text-right text-sm font-bold text-blue-900">ราคา</th>
+                                        <th class="px-6 py-3 text-center text-sm font-bold text-blue-900">สถานะ</th>
+                                        <th class="px-6 py-3 text-center text-sm font-bold text-blue-900">วันที่</th>
+                                        <th class="px-6 py-3 text-center text-sm font-bold text-blue-900">จัดการ</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    {% for booking in bookings %}
+                                        <tr class="hover:bg-blue-50 transition">
+                                            <td class="px-6 py-4 text-sm font-semibold text-blue-900">{{ booking.booking_id }}</td>
+                                            <td class="px-6 py-4 text-sm text-gray-800">{{ booking.product_name }}</td>
+                                            <td class="px-6 py-4 text-sm text-center text-gray-800">{{ booking.quantity }}</td>
+                                            <td class="px-6 py-4 text-sm text-right font-semibold text-gray-800">{{ booking.unit_price|floatformat:2 }} ฿</td>
+                                            <td class="px-6 py-4 text-center">
+                                                {% if booking.status == 'pending' %}
+                                                    <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-semibold">⏳ รอยืนยัน</span>
+                                                {% elif booking.status == 'confirmed' %}
+                                                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">✓ ยืนยันแล้ว</span>
+                                                {% elif booking.status == 'converted' %}
+                                                    <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-semibold">→ แปลงเป็นคำสั่งซื้อ</span>
+                                                {% elif booking.status == 'cancelled' %}
+                                                    <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-semibold">✕ ยกเลิก</span>
+                                                {% endif %}
+                                            </td>
+                                            <td class="px-6 py-4 text-center text-sm text-gray-600">
+                                                {{ booking.created_at|date:"d/m/Y" }}
+                                            </td>
+                                            <td class="px-6 py-4 text-center">
+                                                {% if booking.status in 'pending,confirmed' %}
+                                                    <a href="/cancel-booking/{{ booking.booking_id }}" class="text-red-600 hover:text-red-800 font-semibold text-sm flex items-center justify-center">
+                                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                                    </a>
+                                                {% else %}
+                                                    <span class="text-gray-400 text-sm">-</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-12">
+                            <i data-lucide="inbox" class="w-16 h-16 text-gray-300 mx-auto mb-4"></i>
+                            <p class="text-gray-600 text-lg">ยังไม่มีการจองสินค้า</p>
+                            <a href="/" class="mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition">
+                                ไปจองสินค้า
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        function toggleDetails(orderId) {
+            const detailsRow = document.getElementById('details-' + orderId);
+            if (detailsRow) {
+                detailsRow.classList.toggle('hidden');
+            }
+        }
+
+        // Handle profile form submission
+        document.getElementById('profileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            try {
+                const response = await fetch('/profile', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const messageDiv = document.getElementById('profileMessage');
+                    messageDiv.classList.remove('hidden');
+                    setTimeout(() => {
+                        messageDiv.classList.add('hidden');
+                    }, 3000);
+                } else {
+                    alert('เกิดข้อผิดพลาด: ' + data.message);
+                }
+            } catch (error) {
+                alert('เกิดข้อผิดพลาด: ' + error.message);
+            }
+        });
+    </script>
+</body>
+{% endblock %}

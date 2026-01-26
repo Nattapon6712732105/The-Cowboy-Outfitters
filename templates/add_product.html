@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+{% block title %}เพิ่มสินค้า - CowboyShop Admin{% endblock %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CowboyShop - เพิ่มสินค้า</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Sarabun', sans-serif; }</style>
+</head>
+<body class="bg-slate-100 min-h-screen">
+
+    <!-- Header/Navigation -->
+    <nav class="bg-slate-800 text-white shadow-lg sticky top-0 z-50 border-b-4 border-slate-900">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between h-20">
+                <a href="/employee-sell" class="flex items-center">
+                    <div class="bg-slate-700 p-2 rounded-full border-2 border-slate-600 mr-2">
+                        <i data-lucide="briefcase" class="h-6 w-6 text-slate-300"></i>
+                    </div>
+                    <span class="font-bold text-lg">COWBOYSHOP - ADMIN</span>
+                </a>
+                <div class="flex items-center space-x-4">
+                    <a href="/employee-sell" class="flex items-center px-4 py-2 rounded-md text-sm font-medium text-slate-300 hover:bg-slate-700 transition">
+                        <i data-lucide="arrow-left" class="h-4 w-4 mr-2"></i> กลับ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-2xl mx-auto px-4 py-8">
+        <!-- Success State -->
+        {% if success %}
+        <div class="bg-white rounded-lg shadow-lg p-8 text-center mb-6">
+            <div class="flex justify-center mb-4">
+                <div class="bg-green-100 rounded-full p-4">
+                    <i data-lucide="check-circle" class="w-12 h-12 text-green-600"></i>
+                </div>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">เพิ่มสินค้าสำเร็จ!</h1>
+            <p class="text-gray-600 mb-4">{{ message }}</p>
+            
+            <div class="bg-slate-50 rounded-lg p-4 mb-6 border-2 border-slate-200">
+                <p class="text-sm text-gray-600 mb-1">รหัสสินค้า</p>
+                <p class="text-2xl font-bold text-slate-800">{{ product_id }}</p>
+            </div>
+            
+            <div class="flex gap-3">
+                <a href="/add-product" class="flex-1 bg-slate-600 hover:bg-slate-700 text-white font-bold py-3 px-4 rounded-lg transition flex items-center justify-center">
+                    <i data-lucide="plus" class="w-4 h-4 mr-2"></i> เพิ่มสินค้าอื่น
+                </a>
+                <a href="/employee-sell" class="flex-1 bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-4 rounded-lg transition flex items-center justify-center">
+                    <i data-lucide="list" class="w-4 h-4 mr-2"></i> ดูคำสั่งซื้อ
+                </a>
+            </div>
+        </div>
+        {% else %}
+        <!-- Form -->
+        <div class="bg-white rounded-lg shadow-lg p-8">
+            <h1 class="text-3xl font-bold text-slate-800 mb-2 flex items-center">
+                <i data-lucide="plus-circle" class="w-8 h-8 text-slate-600 mr-3"></i>
+                เพิ่มสินค้า
+            </h1>
+            <p class="text-gray-600 mb-6">กรุณากรอกข้อมูลสินค้าให้ครบถ้วน</p>
+
+            <!-- Error Message -->
+            {% if error %}
+            <div class="bg-red-50 border-2 border-red-300 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center">
+                <i data-lucide="alert-circle" class="w-5 h-5 mr-2 flex-shrink-0"></i>
+                <span>{{ error }}</span>
+            </div>
+            {% endif %}
+
+            <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+
+                <!-- Product Info Section -->
+                <div class="border-b-2 border-slate-100 pb-6">
+                    <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                        <i data-lucide="package" class="w-5 h-5 text-slate-600 mr-2"></i>
+                        ข้อมูลสินค้า
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <!-- Product Name -->
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">ชื่อสินค้า *</label>
+                            <input type="text" name="name" 
+                                   placeholder="เช่น ซาลาเด็ต สไลด์" 
+                                   class="w-full px-4 py-2 border-2 border-slate-300 rounded-lg focus:outline-none focus:border-slate-600 transition"
+                                   required>
+                        </div>
+
+                        <!-- Category & Price Row -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <!-- Category -->
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">หมวดหมู่ *</label>
+                                <select name="category" class="w-full px-4 py-2 border-2 border-slate-300 rounded-lg focus:outline-none focus:border-slate-600 transition" required>
+                                    <option value="">-- เลือกหมวดหมู่ --</option>
+                                    {% for code, label in categories %}
+                                        <option value="{{ code }}">{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Price -->
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">ราคา (บาท) *</label>
+                                <input type="number" name="price" 
+                                       placeholder="0.00" 
+                                       step="0.01"
+                                       min="0"
+                                       class="w-full px-4 py-2 border-2 border-slate-300 rounded-lg focus:outline-none focus:border-slate-600 transition"
+                                       required>
+                            </div>
+                        </div>
+
+                        <!-- Stock -->
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">จำนวนสินค้า (หน่วย)</label>
+                            <div class="flex items-center border-2 border-slate-300 rounded-lg">
+                                <button type="button" onclick="decreaseStock()" class="px-4 py-2 text-slate-600 hover:text-slate-800">-</button>
+                                <input type="number" name="stock" id="stock"
+                                       value="0" 
+                                       min="0" 
+                                       class="flex-1 text-center py-2 border-0 focus:outline-none">
+                                <button type="button" onclick="increaseStock()" class="px-4 py-2 text-slate-600 hover:text-slate-800">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description & Image Section -->
+                <div class="border-b-2 border-slate-100 pb-6">
+                    <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                        <i data-lucide="edit" class="w-5 h-5 text-slate-600 mr-2"></i>
+                        รายละเอียดเพิ่มเติม
+                    </h2>
+
+                    <!-- Description -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-bold text-slate-700 mb-2">คำอธิบาย</label>
+                        <textarea name="description" 
+                                  placeholder="เช่น ซาลาเด็ต เนื้อวัว คุณภาพดี หั่นสดใหม่..."
+                                  rows="3"
+                                  class="w-full px-4 py-2 border-2 border-slate-300 rounded-lg focus:outline-none focus:border-slate-600 transition"></textarea>
+                    </div>
+
+                    <!-- Image Upload -->
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">รูปภาพสินค้า</label>
+                        <div class="relative border-2 border-dashed border-slate-300 rounded-lg p-4 text-center hover:border-slate-400 transition cursor-pointer">
+                            <input type="file" name="image" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                            <div>
+                                <i data-lucide="image" class="w-8 h-8 text-slate-400 mx-auto mb-2"></i>
+                                <p class="text-slate-600 font-medium">คลิกเพื่อเลือกรูปภาพ</p>
+                                <p class="text-xs text-slate-500">หรือลากรูปภาพมาวาง</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Box -->
+                <div class="bg-slate-50 border-2 border-slate-200 rounded-lg p-4 flex gap-3">
+                    <i data-lucide="info" class="w-5 h-5 text-slate-600 flex-shrink-0 mt-0.5"></i>
+                    <div class="text-sm text-slate-700">
+                        <p class="font-bold mb-1">💡 คำแนะนำ</p>
+                        <p>• ชื่อสินค้าควรชัดเจนและรายละเอียด</p>
+                        <p>• กรอกราคาให้ถูกต้อง</p>
+                        <p>• รูปภาพช่วยให้ลูกค้าเห็นสินค้าชัดเจน</p>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex gap-3 pt-4">
+                    <a href="/employee-sell" class="flex-1 bg-slate-300 hover:bg-slate-400 text-slate-800 font-bold py-3 px-4 rounded-lg transition flex items-center justify-center">
+                        <i data-lucide="x" class="w-4 h-4 mr-2"></i> ยกเลิก
+                    </a>
+                    <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition flex items-center justify-center">
+                        <i data-lucide="plus" class="w-4 h-4 mr-2"></i> เพิ่มสินค้า
+                    </button>
+                </div>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        function increaseStock() {
+            const input = document.getElementById('stock');
+            input.value = parseInt(input.value) + 1;
+        }
+
+        function decreaseStock() {
+            const input = document.getElementById('stock');
+            if (parseInt(input.value) > 0) {
+                input.value = parseInt(input.value) - 1;
+            }
+        }
+
+        // File input styling
+        const fileInput = document.querySelector('input[type="file"]');
+        if (fileInput) {
+            fileInput.addEventListener('change', function() {
+                const parent = this.parentElement;
+                if (this.files && this.files[0]) {
+                    parent.innerHTML = `
+                        <div class="text-center">
+                            <i data-lucide="check-circle" class="w-8 h-8 text-green-600 mx-auto mb-2"></i>
+                            <p class="text-green-600 font-medium">เลือก: ${this.files[0].name}</p>
+                        </div>
+                    `;
+                    lucide.createIcons();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+{% endblock %}

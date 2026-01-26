@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}แชท - CowboyShop{% endblock %}
+{% block title %}ติดต่อพนักงาน - CowboyShop{% endblock %}
 
 {% block content %}
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cowboyshop - แชท</title>
+    <title>Cowboyshop - ติดต่อพนักงาน</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -27,7 +27,7 @@
                 <div class="hidden md:flex items-center space-x-4">
                     <a href="/" class="flex items-center px-4 py-2 rounded-md text-sm font-medium text-amber-200 hover:bg-amber-800 hover:text-white transition"><i data-lucide="home" class="h-4 w-4 mr-2"></i> หน้าแรก</a>
                     <a href="/product" class="flex items-center px-4 py-2 rounded-md text-sm font-medium text-amber-200 hover:bg-amber-800 hover:text-white transition"><i data-lucide="shopping-bag" class="h-4 w-4 mr-2"></i> สินค้า</a>
-                    <a href="/chat" class="flex items-center px-4 py-2 rounded-md text-sm font-medium bg-amber-800 text-white shadow-inner border border-amber-700"><i data-lucide="message-circle" class="h-4 w-4 mr-2"></i> แชท</a>
+                    <a href="/chat" class="flex items-center px-4 py-2 rounded-md text-sm font-medium bg-amber-800 text-white shadow-inner border border-amber-700"><i data-lucide="phone" class="h-4 w-4 mr-2"></i> ติดต่อพนักงาน</a>
                     <a href="/login" class="flex items-center px-4 py-2 rounded-md text-sm font-medium text-amber-200 hover:bg-amber-800 hover:text-white transition"><i data-lucide="user" class="h-4 w-4 mr-2"></i> เข้าสู่ระบบ</a>
                 </div>
             </div>
@@ -35,53 +35,102 @@
     </nav>
 
     <div class="flex-grow p-4 md:p-10">
-        <div class="max-w-2xl mx-auto bg-white shadow-2xl rounded-xl overflow-hidden border border-amber-200 flex flex-col h-[600px]">
-            <!-- Header -->
-            <div class="bg-amber-800 p-4 flex items-center space-x-3 text-white shadow-md">
-                <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                    <i data-lucide="message-circle" class="w-6 h-6 text-white"></i>
-                </div>
-                <div>
-                    <h3 class="font-bold">Cowboyshop Support</h3>
-                    <p class="text-xs text-amber-200 flex items-center"><span class="w-2 h-2 bg-green-400 rounded-full mr-1"></span> Online</p>
+        <div class="max-w-2xl mx-auto">
+            <!-- Header Section -->
+            <div class="bg-white shadow-2xl rounded-xl overflow-hidden border border-amber-200 mb-8">
+                <div class="bg-amber-800 p-6 text-white">
+                    <h1 class="text-3xl font-bold flex items-center mb-2">
+                        <i data-lucide="headset" class="w-8 h-8 mr-3"></i>
+                        ติดต่อพนักงาน
+                    </h1>
+                    <p class="text-amber-200">เรามีพนักงานพร้อมช่วยเหลือคุณตลอดเวลา</p>
                 </div>
             </div>
-            
-            <!-- Messages -->
-            <div id="chatMessages" class="flex-1 overflow-y-auto p-4 bg-amber-50 space-y-4">
-                <div class="flex justify-start">
-                    <div class="max-w-[70%] p-3 rounded-2xl shadow-sm bg-white text-gray-800 border border-gray-200 rounded-bl-none">
-                        ยินดีต้อนรับเข้าสู่ Cowboyshop! คุณต้องการความช่วยเหลืออะไรไหม?
+
+            <!-- Contact Methods -->
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <!-- Phone Contact -->
+                <div class="bg-white shadow-lg rounded-xl p-6 border-l-4 border-amber-800">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+                            <i data-lucide="phone" class="w-6 h-6 text-amber-800"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 ml-4">โทรศัพท์</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">เรียกโทรมาติดต่อเราได้ตั้งแต่เช้า 9:00 - 18:00 น.</p>
+                    <a href="tel:0991234567" class="inline-block bg-amber-800 hover:bg-amber-900 text-white font-bold py-3 px-6 rounded-lg transition transform hover:scale-105">
+                        <i data-lucide="phone-call" class="inline w-5 h-5 mr-2"></i>
+                        099-123-4567
+                    </a>
+                </div>
+
+                <!-- Email Contact -->
+                <div class="bg-white shadow-lg rounded-xl p-6 border-l-4 border-amber-700">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+                            <i data-lucide="mail" class="w-6 h-6 text-amber-800"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 ml-4">อีเมล</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">ส่งคำถามมาให้เราและจะตอบภายใน 24 ชั่วโมง</p>
+                    <a href="mailto:support@cowboyshop.com" class="inline-block bg-amber-700 hover:bg-amber-800 text-white font-bold py-3 px-6 rounded-lg transition transform hover:scale-105">
+                        <i data-lucide="mail" class="inline w-5 h-5 mr-2"></i>
+                        support@cowboyshop.com
+                    </a>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="bg-white shadow-2xl rounded-xl p-8 border border-amber-200">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">ส่งข้อความถึงเรา</h2>
+                <form class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">ชื่อ *</label>
+                        <input type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none" placeholder="กรุณาระบุชื่อของคุณ">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">อีเมล *</label>
+                        <input type="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none" placeholder="example@email.com">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">เบอร์โทรศัพท์</label>
+                        <input type="tel" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none" placeholder="0991234567">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">หัวข้อ *</label>
+                        <input type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none" placeholder="เรื่องที่ต้องการติดต่อ">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">ข้อความ *</label>
+                        <textarea required rows="5" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none" placeholder="ระบุรายละเอียดของปัญหาหรือคำถาม..."></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-amber-800 hover:bg-amber-900 text-white font-bold py-3 px-4 rounded-lg transition transform hover:scale-105">
+                        <i data-lucide="send" class="inline w-5 h-5 mr-2"></i>
+                        ส่งข้อความ
+                    </button>
+                </form>
+            </div>
+
+            <!-- Business Hours -->
+            <div class="bg-amber-50 rounded-xl p-6 border border-amber-200 mt-8">
+                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                    <i data-lucide="clock" class="w-5 h-5 mr-2 text-amber-800"></i>
+                    เวลาทำการ
+                </h3>
+                <div class="grid md:grid-cols-2 gap-4 text-sm text-gray-700">
+                    <div>
+                        <p class="font-semibold text-gray-800">วันธรรมชาติ</p>
+                        <p>จันทร์ - ศุกร์: 09:00 - 18:00 น.</p>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-gray-800">วันหยุด</p>
+                        <p>เสาร์ - อาทิตย์: 10:00 - 16:00 น.</p>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Input -->
-            <div class="border-t border-gray-200 p-4 bg-white flex gap-2">
-                <input type="text" id="chatInput" placeholder="พิมพ์ข้อความ..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
-                <button onclick="sendMessage()" class="bg-amber-800 text-white px-6 py-2 rounded-lg hover:bg-amber-700 transition font-medium">ส่ง</button>
             </div>
         </div>
     </div>
 
-    <script>
-        function sendMessage() {
-            const input = document.getElementById('chatInput');
-            const message = input.value.trim();
-            if (message) {
-                const messagesDiv = document.getElementById('chatMessages');
-                const msgElement = document.createElement('div');
-                msgElement.className = 'flex justify-end';
-                msgElement.innerHTML = `<div class="max-w-[70%] p-3 rounded-2xl shadow-sm bg-amber-800 text-white border border-amber-700 rounded-br-none">${message}</div>`;
-                messagesDiv.appendChild(msgElement);
-                input.value = '';
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            }
-        }
-        document.getElementById('chatInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') sendMessage();
-        });
-    </script>
-
+    <script>lucide.createIcons();</script>
 </body>
 {% endblock %}

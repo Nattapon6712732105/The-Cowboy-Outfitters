@@ -40,13 +40,14 @@
                 <h2 class="text-3xl font-extrabold text-gray-900 font-serif">เข้าสู่ระบบสมาชิก</h2>
                 <p class="mt-2 text-sm text-gray-600">ยินดีต้อนรับกลับสู่ Cowboyshop</p>
             </div>
-            <form class="mt-8 space-y-6" action="#" method="POST" onsubmit="event.preventDefault(); alert('เข้าสู่ระบบสำเร็จ'); window.location.href='/';">
+            <form class="mt-8 space-y-6" action="{% url 'login' %}" method="POST">
+                {% csrf_token %}
                 <div class="rounded-md shadow-sm -space-y-px">
                     <div>
-                        <input type="email" required class="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-amber-500 focus:border-amber-500 focus:z-10 sm:text-sm" placeholder="อีเมล">
+                        <input type="email" name="email" required class="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-amber-500 focus:border-amber-500 focus:z-10 sm:text-sm" placeholder="อีเมล">
                     </div>
                     <div>
-                        <input type="password" required class="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-amber-500 focus:border-amber-500 focus:z-10 sm:text-sm" placeholder="รหัสผ่าน">
+                        <input type="password" name="password" required class="appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-amber-500 focus:border-amber-500 focus:z-10 sm:text-sm" placeholder="รหัสผ่าน">
                     </div>
                 </div>
 
@@ -66,8 +67,12 @@
                     </button>
                 </div>
             </form>
-             <div class="mt-4 text-center">
-                <a href="employee.html" class="text-xs text-gray-400 hover:text-amber-600">เข้าสู่ระบบพนักงาน (Employee)</a>
+            <div class="mt-4 text-center space-y-2">
+                <p class="text-sm text-gray-600">
+                    ยังไม่มีบัญชี?
+                    <a href="/register" class="font-medium text-amber-600 hover:text-amber-700">สมัครบัญชีใหม่</a>
+                </p>
+                <a href="/employee" class="text-xs text-gray-400 hover:text-amber-600 block">เข้าสู่ระบบพนักงาน (Employee)</a>
             </div>
         </div>
     </div>

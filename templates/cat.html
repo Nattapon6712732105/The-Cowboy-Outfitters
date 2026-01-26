@@ -73,31 +73,15 @@
 
     <!-- Chat Section (รวมไว้ด้านล่างสินค้า) -->
     <div class="max-w-2xl mx-auto mb-12 px-4">
-        <div class="bg-white shadow-2xl rounded-xl overflow-hidden border border-amber-200 flex flex-col h-[400px]">
-            <!-- Header -->
-            <div class="bg-amber-800 p-4 flex items-center space-x-3 text-white shadow-md">
-                <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                    <i data-lucide="message-circle" class="w-6 h-6 text-white"></i>
-                </div>
+        <div class="bg-amber-100 border-t-4 border-amber-800 rounded-lg p-6 shadow-lg">
+            <div class="flex items-start space-x-4">
+                <svg class="w-8 h-8 text-amber-800 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zm-11-1a1 1 0 11-2 0 1 1 0 012 0zM8 9a1 1 0 100-2 1 1 0 000 2zm5 0a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path>
+                </svg>
                 <div>
-                    <h3 class="font-bold">Cowboyshop Support</h3>
-                    <p class="text-xs text-amber-200 flex items-center"><span class="w-2 h-2 bg-green-400 rounded-full mr-1"></span> Online</p>
+                    <h3 class="font-bold text-amber-900 mb-1">ต้องการความช่วยเหลือ?</h3>
+                    <p class="text-sm text-amber-800 mb-3">ติดต่อพนักงานของเราได้ที่ <a href="/chat" class="font-bold hover:underline">หน้าติดต่อพนักงาน</a></p>
                 </div>
-            </div>
-            
-            <!-- Messages -->
-            <div id="chatMessages" class="flex-1 overflow-y-auto p-4 bg-amber-50 space-y-4">
-                <div class="flex justify-start">
-                    <div class="max-w-[70%] p-3 rounded-2xl shadow-sm bg-white text-gray-800 border border-gray-200 rounded-bl-none">
-                        ยินดีต้อนรับเข้าสู่ Cowboyshop! คุณต้องการความช่วยเหลืออะไรไหม?
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Input -->
-            <div class="border-t border-gray-200 p-4 bg-white flex gap-2">
-                <input type="text" id="chatInput" placeholder="พิมพ์ข้อความ..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500">
-                <button onclick="sendMessage()" class="bg-amber-800 text-white px-6 py-2 rounded-lg hover:bg-amber-700 transition font-medium">ส่ง</button>
             </div>
         </div>
     </div>
@@ -109,18 +93,29 @@
     <script>
         lucide.createIcons();
 
-        // ข้อมูลสินค้า (Mock Data)
+        // ข้อมูลสินค้าจากฐานข้อมูล
         const products = [
-            { id: 1, name: "หมวกคาวบอยหนังแท้", category: "หมวก", price: 2500, image: "https://images.unsplash.com/photo-1559563458-52c69f8f1f6c?auto=format&fit=crop&q=80&w=800", desc: "หมวกหนังแท้สีน้ำตาล ทนทาน" },
-            { id: 2, name: "รองเท้าบูทตะวันตก", category: "รองเท้า", price: 4500, image: "https://images.unsplash.com/photo-1534963503144-8d48b10bc6a9?auto=format&fit=crop&q=80&w=800", desc: "รองเท้าบูทหนังแกะสลักลวดลาย" },
-            { id: 3, name: "เสื้อเชิ้ตลายสก๊อต", category: "เสื้อผ้า", price: 1200, image: "https://images.unsplash.com/photo-1534653299134-96a171b61581?auto=format&fit=crop&q=80&w=800", desc: "เสื้อเชิ้ตผ้าฝ้ายระบายอากาศดี" },
-            { id: 4, name: "เข็มขัดหัวกระทิง", category: "เครื่องประดับ", price: 1800, image: "https://images.unsplash.com/photo-1624222247344-550fb60583dc?auto=format&fit=crop&q=80&w=800", desc: "เข็มขัดหนังเกรดพรีเมียม" },
-            { id: 5, name: "แจ็คเก็ตยีนส์", category: "เสื้อผ้า", price: 3200, image: "https://images.unsplash.com/photo-1605908502724-9093a79a1b39?auto=format&fit=crop&q=80&w=800", desc: "แจ็คเก็ตยีนส์ฟอกสี สไตล์วินเทจ" },
-            { id: 6, name: "เชือกบ่วงบาศ", category: "อุปกรณ์", price: 850, image: "https://images.unsplash.com/photo-1599596373756-3c58b4566c1b?auto=format&fit=crop&q=80&w=800", desc: "เชือกคุณภาพสูงสำหรับการฝึกซ้อม" }
+            {% for p in products %}
+            { 
+                id: {{ p.id }}, 
+                name: "{{ p.name }}", 
+                category: "{{ p.get_category_display }}", 
+                price: {{ p.price }}, 
+                image: "{% if p.image %}{{ p.image.url }}{% else %}https://images.unsplash.com/photo-1599596373756-3c58b4566c1b?auto=format&fit=crop&q=80&w=800{% endif %}", 
+                desc: "{{ p.description|truncatewords:15 }}" 
+            },
+            {% endfor %}
         ];
 
         function renderProducts(items) {
             const grid = document.getElementById('productGrid');
+            if (!grid) return;
+            
+            if (items.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-12"><p class="text-gray-500 text-lg">ไม่มีสินค้า</p></div>';
+                return;
+            }
+            
             grid.innerHTML = items.map(p => `
                 <div class="bg-white rounded-lg overflow-hidden shadow-lg border border-amber-200 flex flex-col hover:shadow-2xl transition-shadow duration-300">
                     <div class="relative h-64 overflow-hidden">
@@ -133,16 +128,18 @@
                         <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
                             <span class="text-2xl font-bold text-amber-800">฿${p.price.toLocaleString()}</span>
                         </div>
-                        <div class="mt-4 grid grid-cols-2 gap-3">
-                            <button onclick="openShopModal(${p.id})" class="flex items-center justify-center bg-amber-700 hover:bg-amber-800 text-white py-2 px-4 rounded font-medium transition-colors">ซื้อสินค้า</button>
-                            <button onclick="alert('จองสินค้า ${p.name} แล้ว')" class="flex items-center justify-center bg-transparent border-2 border-amber-700 text-amber-900 hover:bg-amber-50 py-2 px-4 rounded font-medium transition-colors">
-                                <i data-lucide="clock" class="w-4 h-4 mr-1"></i> จอง
-                            </button>
-                        </div>
+                        <button onclick="buyProduct('${p.name}', ${p.price})" class="mt-4 w-full flex items-center justify-center bg-amber-700 hover:bg-amber-800 text-white py-2 px-4 rounded font-medium transition-colors">
+                            <i data-lucide="shopping-cart" class="w-4 h-4 mr-2"></i> เลือกสินค้านี้
+                        </button>
                     </div>
                 </div>
             `).join('');
             lucide.createIcons();
+        }
+
+        function buyProduct(productName, price) {
+            // ไปยังหน้า shop พร้อมข้อมูลสินค้า
+            window.location.href = `/shop?product=${encodeURIComponent(productName)}&price=${price}`;
         }
 
         function filterProducts() {
@@ -159,24 +156,6 @@
 
         // Initial Render
         renderProducts(products);
-
-        // Chat Functions
-        function sendMessage() {
-            const input = document.getElementById('chatInput');
-            const message = input.value.trim();
-            if (message) {
-                const messagesDiv = document.getElementById('chatMessages');
-                const msgElement = document.createElement('div');
-                msgElement.className = 'flex justify-end';
-                msgElement.innerHTML = `<div class="max-w-[70%] p-3 rounded-2xl shadow-sm bg-amber-800 text-white border border-amber-700 rounded-br-none">${message}</div>`;
-                messagesDiv.appendChild(msgElement);
-                input.value = '';
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            }
-        }
-        document.getElementById('chatInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') sendMessage();
-        });
     </script>
 </body>
 

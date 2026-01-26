@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-&#$@&d3p@mgp*r#uyun)jljds+#uxl$4gnzo+0(z54g1$lt=^y"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*', '.vercel.app']
 
@@ -127,3 +127,16 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+# Session settings - ให้ session คงอยู่
+SESSION_COOKIE_AGE = 1209600  # 2 weeks
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SECURE = False  # ตั้ง True ถ้าใช้ HTTPS
+
+# Media files - สำหรับ upload สลีปโอนเงิน
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# Login URL
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'profile'

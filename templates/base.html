@@ -50,14 +50,31 @@
                 <!-- เมนูตรงกลาง -->
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-6">
-                        <a href="/" class="hover:text-orange-200 px-3 py-2 rounded-md text-sm font-medium"></a>
-                        <a href="/category" class="hover:text-orange-200 px-3 py-2 rounded-md text-sm font-medium"></a>
-                        <a href="#" class="hover:text-orange-200 px-3 py-2 rounded-md text-sm font-medium"></a>
+                        <a href="/" class="hover:text-orange-200 px-3 py-2 rounded-md text-sm font-medium">หน้าแรก</a>
+                        <a href="/category" class="hover:text-orange-200 px-3 py-2 rounded-md text-sm font-medium">หมวดหมู่</a>
+                        <a href="/product" class="hover:text-orange-200 px-3 py-2 rounded-md text-sm font-medium">สินค้า</a>
+                        <a href="/chat" class="hover:text-orange-200 px-3 py-2 rounded-md text-sm font-medium">📞 ติดต่อพนักงาน</a>
                     </div>
                 </div>
 
-                <!-- ปุ่ม Login ตามแบบหน้า 1 -->
-                
+                <!-- ปุ่ม Login/Profile ตามแบบหน้า 1 -->
+                <div class="flex items-center space-x-4">
+                    {% if user.is_authenticated %}
+                        <div class="relative">
+                            <button onclick="toggleProfileMenu()" class="hover:text-orange-200 px-4 py-2 rounded-md text-sm font-medium flex items-center bg-amber-800 rounded-lg py-2">
+                                👤 {{ user.first_name|default:user.username }}
+                            </button>
+                            <div id="profileMenu" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-2xl z-50 border border-amber-200 overflow-hidden">
+                                <a href="/profile" class="block px-4 py-3 text-gray-800 hover:bg-amber-100 transition font-medium">📊 บัญชีของฉัน</a>
+                                <a href="/product" class="block px-4 py-3 text-gray-800 hover:bg-amber-100 transition font-medium">🛒 ดูสินค้า</a>
+                                <hr class="border-amber-100">
+                                <a href="/logout" class="block px-4 py-3 text-red-600 hover:bg-red-100 transition font-medium">🚪 ออกจากระบบ</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="/login" class="hover:text-orange-200 px-4 py-2 rounded-md text-sm font-medium">เข้าสู่ระบบ</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </nav>
@@ -215,6 +232,24 @@
         document.getElementById('shopModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeShopModal();
+            }
+        });
+
+        // Toggle Profile Menu
+        function toggleProfileMenu() {
+            const menu = document.getElementById('profileMenu');
+            if (menu) {
+                menu.classList.toggle('hidden');
+            }
+        }
+
+        // Close profile menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const profileMenu = document.getElementById('profileMenu');
+            const profileButton = e.target.closest('button[onclick="toggleProfileMenu()"]');
+            
+            if (profileMenu && !profileButton && !e.target.closest('#profileMenu')) {
+                profileMenu.classList.add('hidden');
             }
         });
     </script>

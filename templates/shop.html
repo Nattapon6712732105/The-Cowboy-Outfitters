@@ -1,141 +1,206 @@
 {% extends "base.html" %}
-
 {% load static %}
-
-{% block title %}ร้านค้า - CowboyShop{% endblock %}
-
+{% block title %}สั่งซื้อสินค้า - CowboyShop{% endblock %}
 {% block content %}
 
-<!-- Modal Overlay -->
-<div id="shopModal" class="hidden fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-4">
-    <!-- Modal Content -->
-    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-2xl border-4 border-amber-800">
-        <!-- Close Button -->
-        <button onclick="closeShopModal()" class="absolute top-4 right-4 z-50 bg-amber-700 hover:bg-amber-800 text-white p-2 rounded-full transition">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-        </button>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cowboyshop - สั่งซื้อสินค้า</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Sarabun', sans-serif; }</style>
+</head>
 
-        <div class="flex flex-col md:flex-row h-full">
-            <!-- Left Side - Product Image -->
-            <div class="md:w-1/2 bg-gradient-to-br from-amber-100 to-amber-200 p-8 flex flex-col justify-between">
-                <div class="text-center">
-                    <button onclick="toggleSaved()" class="inline-block mb-4 transition-transform hover:scale-110">
-                        <i id="starIcon" data-lucide="star" class="w-12 h-12 text-amber-600 fill-current"></i>
-                    </button>
-                </div>
-                <div class="flex-1 flex items-center justify-center">
-                    <img id="shopProductImage" src="" alt="สินค้า" class="w-full h-64 object-cover rounded-lg shadow-lg">
-                </div>
-                <div class="text-center mt-4">
-                    <p class="text-amber-900 font-medium text-sm">ซื้อสินค้า</p>
-                </div>
-            </div>
+<body class="bg-amber-50 min-h-screen py-12">
+    <div class="max-w-4xl mx-auto px-4">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8 border-t-4 border-amber-800">
+            <h1 class="text-3xl font-bold text-amber-900 flex items-center">
+                <svg class="w-8 h-8 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+                ฟอร์มสั่งซื้อสินค้า
+            </h1>
+            <p class="text-gray-600 mt-2">กรุณากรอกข้อมูลการสั่งซื้อให้ครบถ้วน</p>
+        </div>
 
-            <!-- Right Side - Product Details -->
-            <div class="md:w-1/2 p-8 flex flex-col justify-between bg-amber-50">
-                <!-- Status Section -->
-                <div>
-                    <h2 class="text-2xl font-bold text-amber-900 mb-2">สถานะณะ</h2>
-                    <div id="shopProductName" class="text-lg font-semibold text-gray-800 mb-4"></div>
-                    <div class="bg-white border-2 border-amber-300 rounded-lg p-4 mb-6">
-                        <p class="text-gray-600 mb-2"><span class="font-medium">ประเภท:</span> <span id="shopProductCategory"></span></p>
-                        <p class="text-gray-600 mb-2"><span class="font-medium">รายละเอียด:</span> <span id="shopProductDesc"></span></p>
-                        <p class="text-2xl font-bold text-amber-800">ราคา: ฿<span id="shopProductPrice"></span></p>
+        <!-- Form -->
+        <div class="bg-white rounded-lg shadow-lg p-8 border-l-4 border-amber-800">
+            <form id="orderForm" class="space-y-6" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- Section 1: ข้อมูลสินค้า -->
+                <fieldset class="border border-amber-200 rounded-lg p-6">
+                    <legend class="text-xl font-bold text-amber-900 px-3">ข้อมูลสินค้า</legend>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mt-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">ชื่อสินค้า *</label>
+                            <input type="text" name="product_name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none" placeholder="เช่น ชุดคาวบอยคลาสสิก">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">จำนวน (ชิ้น) *</label>
+                            <input type="number" name="quantity" required min="1" value="1" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none">
+                        </div>
                     </div>
-                </div>
 
-                <!-- Action Buttons -->
-                <div class="space-y-3">
-                    <button onclick="saveShopping()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-6 rounded-lg transition-all shadow-lg">
-                        ซื้อราคา
+                    <div class="grid md:grid-cols-2 gap-6 mt-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">ราคาต่อหน่วย (บาท) *</label>
+                            <input type="number" name="unit_price" required min="0" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none" placeholder="เช่น 1990">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">รวม (บาท)</label>
+                            <input type="text" id="totalPrice" disabled class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-amber-50 text-amber-900 font-bold" value="0.00">
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">หมายเหตุเพิ่มเติม</label>
+                        <textarea name="notes" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none" placeholder="ข้อมูลเพิ่มเติมเกี่ยวกับสินค้า (ถ้ามี)"></textarea>
+                    </div>
+                </fieldset>
+
+                <!-- Section 2: ข้อมูลลูกค้า -->
+                <fieldset class="border border-amber-200 rounded-lg p-6">
+                    <legend class="text-xl font-bold text-amber-900 px-3">ข้อมูลลูกค้า</legend>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mt-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">ชื่อลูกค้า (ชื่อที่อิสระ) *</label>
+                            <input type="text" name="customer_name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none" placeholder="ระบุชื่อลูกค้า">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">เบอร์โทรศัพท์ *</label>
+                            <input type="tel" name="customer_phone" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none" placeholder="0812345678">
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Section 3: สลีปการโอนเงิน -->
+                <fieldset class="border border-amber-200 rounded-lg p-6">
+                    <legend class="text-xl font-bold text-amber-900 px-3">สลีปการโอนเงิน</legend>
+                    
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">อัปโหลดรูปสลีปโอนเงิน</label>
+                        <div class="border-2 border-dashed border-amber-300 rounded-lg p-6 hover:border-amber-500 transition cursor-pointer bg-amber-50">
+                            <input type="file" name="receipt_image" accept="image/*" class="hidden" id="receiptInput">
+                            <label for="receiptInput" class="flex flex-col items-center justify-center cursor-pointer">
+                                <svg class="w-12 h-12 text-amber-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                </svg>
+                                <p class="text-sm font-medium text-amber-900">คลิกเพื่ออัปโหลดรูปสลีป</p>
+                                <p class="text-xs text-amber-700 mt-1">หรือลากไฟล์มาวาง (JPG, PNG)</p>
+                            </label>
+                            <p id="fileName" class="text-xs text-gray-600 mt-2"></p>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Buttons -->
+                <div class="flex gap-4 pt-6">
+                    <button type="submit" class="flex-1 bg-amber-800 hover:bg-amber-900 text-white font-bold py-3 px-4 rounded-lg transition transform hover:scale-105 flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        ยืนยันการสั่งซื้อ
                     </button>
-                    <button onclick="closeShopModal()" class="w-full bg-gray-400 hover:bg-gray-500 text-white font-bold py-3 px-6 rounded-lg transition-all">
+                    <button type="reset" class="flex-1 bg-gray-400 hover:bg-gray-500 text-white font-bold py-3 px-4 rounded-lg transition">
                         ยกเลิก
                     </button>
                 </div>
+            </form>
+        </div>
+
+        <!-- Success Message -->
+        <div id="successMessage" class="hidden mt-8 bg-green-100 border-l-4 border-green-600 p-6 rounded-lg">
+            <p class="text-green-800 font-bold text-lg">✓ สั่งซื้อสำเร็จ!</p>
+            <p class="text-green-700 mt-2">เลขออเดอร์: <span id="successOrderId" class="font-bold text-xl text-green-900"></span></p>
+            <p class="text-green-700 mt-2">พนักงานของเราจะตรวจสอบและติดต่อคุณในไม่ช้า</p>
+            <div class="flex gap-3 mt-4">
+                <a href="/profile" class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition">
+                    📊 ดูคำสั่งของฉัน
+                </a>
+                <a href="/product" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition">
+                    🛒 สั่งซื้อต่อ
+                </a>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    lucide.createIcons();
-    
-    let currentProduct = null;
-    let isSaved = false;
+    <script>
+        lucide.createIcons();
 
-    function openShopModal(productId) {
-        // ข้อมูลสินค้าทั้งหมด
-        const products = [
-            { id: 1, name: "หมวกคาวบอยหนังแท้", category: "หมวก", price: 2500, image: "https://images.unsplash.com/photo-1559563458-52c69f8f1f6c?auto=format&fit=crop&q=80&w=800", desc: "หมวกหนังแท้สีน้ำตาล ทนทาน" },
-            { id: 2, name: "รองเท้าบูทตะวันตก", category: "รองเท้า", price: 4500, image: "https://images.unsplash.com/photo-1534963503144-8d48b10bc6a9?auto=format&fit=crop&q=80&w=800", desc: "รองเท้าบูทหนังแกะสลักลวดลาย" },
-            { id: 3, name: "เสื้อเชิ้ตลายสก๊อต", category: "เสื้อผ้า", price: 1200, image: "https://images.unsplash.com/photo-1534653299134-96a171b61581?auto=format&fit=crop&q=80&w=800", desc: "เสื้อเชิ้ตผ้าฝ้ายระบายอากาศดี" },
-            { id: 4, name: "เข็มขัดหัวกระทิง", category: "เครื่องประดับ", price: 1800, image: "https://images.unsplash.com/photo-1624222247344-550fb60583dc?auto=format&fit=crop&q=80&w=800", desc: "เข็มขัดหนังเกรดพรีเมียม" },
-            { id: 5, name: "แจ็คเก็ตยีนส์", category: "เสื้อผ้า", price: 3200, image: "https://images.unsplash.com/photo-1605908502724-9093a79a1b39?auto=format&fit=crop&q=80&w=800", desc: "แจ็คเก็ตยีนส์ฟอกสี สไตล์วินเทจ" },
-            { id: 6, name: "เชือกบ่วงบาศ", category: "อุปกรณ์", price: 850, image: "https://images.unsplash.com/photo-1599596373756-3c58b4566c1b?auto=format&fit=crop&q=80&w=800", desc: "เชือกคุณภาพสูงสำหรับการฝึกซ้อม" }
-        ];
-
-        const product = products.find(p => p.id === productId);
-        if (!product) return;
-
-        currentProduct = product;
-        isSaved = false;
-
-        // Update modal content
-        document.getElementById('shopProductName').textContent = product.name;
-        document.getElementById('shopProductCategory').textContent = product.category;
-        document.getElementById('shopProductDesc').textContent = product.desc;
-        document.getElementById('shopProductPrice').textContent = product.price.toLocaleString();
-        document.getElementById('shopProductImage').src = product.image;
-
-        // Reset star icon
-        const starIcon = document.getElementById('starIcon');
-        starIcon.classList.add('text-amber-600');
-        starIcon.classList.remove('text-yellow-500');
-
-        // Show modal
-        document.getElementById('shopModal').classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeShopModal() {
-        document.getElementById('shopModal').classList.add('hidden');
-        document.body.style.overflow = 'auto';
-        currentProduct = null;
-        isSaved = false;
-    }
-
-    function toggleSaved() {
-        isSaved = !isSaved;
-        const starIcon = document.getElementById('starIcon');
-        if (isSaved) {
-            starIcon.classList.remove('text-amber-600');
-            starIcon.classList.add('text-yellow-500');
-        } else {
-            starIcon.classList.add('text-amber-600');
-            starIcon.classList.remove('text-yellow-500');
+        // อ่าน query parameter จาก URL
+        function getQueryParam(param) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(param);
         }
-    }
 
-    function saveShopping() {
-        if (!currentProduct) return;
-        
-        if (isSaved) {
-            alert(`บันทึกการจอง: ${currentProduct.name} (${currentProduct.price} บาท)`);
-        } else {
-            alert(`ซื้อสินค้า: ${currentProduct.name} (${currentProduct.price} บาท)`);
+        // Pre-fill ข้อมูลจากสินค้าที่เลือก
+        window.addEventListener('DOMContentLoaded', function() {
+            const product = getQueryParam('product');
+            const price = getQueryParam('price');
+            
+            if (product) {
+                document.querySelector('input[name="product_name"]').value = product;
+            }
+            if (price) {
+                document.querySelector('input[name="unit_price"]').value = price;
+                calculateTotal();
+            }
+        });
+
+        // แสดงชื่อไฟล์เมื่ออัปโหลด
+        document.getElementById('receiptInput').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name;
+            document.getElementById('fileName').textContent = fileName ? '✓ ' + fileName : '';
+        });
+
+        // คำนวณราคารวม
+        document.querySelectorAll('input[name="quantity"], input[name="unit_price"]').forEach(input => {
+            input.addEventListener('change', calculateTotal);
+            input.addEventListener('keyup', calculateTotal);
+        });
+
+        function calculateTotal() {
+            const quantity = parseFloat(document.querySelector('input[name="quantity"]').value) || 0;
+            const unitPrice = parseFloat(document.querySelector('input[name="unit_price"]').value) || 0;
+            const total = quantity * unitPrice;
+            document.getElementById('totalPrice').value = total.toLocaleString('th-TH', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
         }
-        closeShopModal();
-    }
 
-    // Close modal when clicking outside
-    document.getElementById('shopModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeShopModal();
-        }
-    });
-</script>
+        // Submit form
+        document.getElementById('orderForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
 
+            const formData = new FormData(this);
+
+            try {
+                const response = await fetch('/create-order', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // ซ่อนฟอร์ม แสดงข้อความสำเร็จ
+                    document.querySelector('form').style.display = 'none';
+                    document.getElementById('successMessage').classList.remove('hidden');
+                    document.getElementById('successOrderId').textContent = data.order_id;
+                } else {
+                    alert('เกิดข้อผิดพลาด: ' + data.message);
+                }
+            } catch (error) {
+                alert('เกิดข้อผิดพลาด: ' + error.message);
+            }
+        });
+    </script>
+</body>
 {% endblock %}
