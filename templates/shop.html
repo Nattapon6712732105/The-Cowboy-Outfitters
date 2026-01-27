@@ -83,10 +83,58 @@
                 <fieldset class="border border-amber-200 rounded-lg p-6">
                     <legend class="text-xl font-bold text-amber-900 px-3">สลีปการโอนเงิน</legend>
                     
-                    <div class="mt-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">อัปโหลดรูปสลีปโอนเงิน</label>
+                    <!-- Bank Account Info -->
+                    <div class="bg-amber-50 border-2 border-amber-300 rounded-lg p-6 mt-4 mb-6">
+                        <h3 class="text-lg font-bold text-amber-900 mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"></path>
+                            </svg>
+                            ข้อมูลการโอนเงิน
+                        </h3>
+                        
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <!-- Bank Account Details -->
+                            <div>
+                                <p class="text-sm text-gray-600 mb-1">ชื่อบัญชี:</p>
+                                <p class="text-lg font-bold text-amber-900">นาย ณัฐพงศ์ ใจเกษ</p>
+                                
+                                <p class="text-sm text-gray-600 mt-4 mb-1">ธนาคาร:</p>
+                                <p class="text-lg font-bold text-amber-900">ธนาคารกสิกรไทย</p>
+                                
+                                <p class="text-sm text-gray-600 mt-4 mb-1">เลขบัญชี:</p>
+                                <div class="bg-white border-2 border-amber-300 rounded p-3 mt-2">
+                                    <p class="text-2xl font-mono font-bold text-amber-900 text-center" onclick="copyToClipboard(this)">
+                                        013-2-55827-1
+                                    </p>
+                                    <p class="text-xs text-gray-500 text-center mt-1 cursor-pointer" onclick="copyToClipboard(this)">
+                                        (คลิกเพื่อคัดลอก)
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <!-- QR Code -->
+                            <div class="flex flex-col items-center justify-center">
+                                <p class="text-sm text-gray-600 mb-3 font-bold">สแกน QR Code</p>
+                                <div class="bg-white p-4 border-2 border-amber-300 rounded-lg">
+                                    <img src="{% static 'images/qr-code.png' %}" alt="QR Code for Bank Transfer" class="w-48 h-48">
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">ธนาคารกสิกรไทย</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 p-4 bg-red-50 border-l-4 border-red-500 rounded">
+                            <p class="text-sm text-red-900 font-semibold">⚠️ สำคัญ:</p>
+                            <p class="text-sm text-red-800 mt-1">• โปรดตรวจสอบเลขบัญชีให้ถูกต้องก่อนโอนเงิน</p>
+                            <p class="text-sm text-red-800">• อัปโหลดสลีปหลังจากโอนเงินแล้ว</p>
+                            <p class="text-sm text-red-800">• พนักงานจะตรวจสอบและติดต่อคุณในไม่ช้า</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Receipt Upload -->
+                    <div class="mt-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">อัปโหลดรูปสลีปโอนเงิน *</label>
                         <div class="border-2 border-dashed border-amber-300 rounded-lg p-6 hover:border-amber-500 transition cursor-pointer bg-amber-50">
-                            <input type="file" name="receipt_image" accept="image/*" class="hidden" id="receiptInput">
+                            <input type="file" name="receipt_image" accept="image/*" class="hidden" id="receiptInput" required>
                             <label for="receiptInput" class="flex flex-col items-center justify-center cursor-pointer">
                                 <svg class="w-12 h-12 text-amber-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
@@ -132,6 +180,22 @@
 
     <script>
         lucide.createIcons();
+
+        // Copy to clipboard function
+        function copyToClipboard(element) {
+            const text = element.textContent.trim();
+            if (text && !text.includes('คลิก')) {
+                navigator.clipboard.writeText(text).then(() => {
+                    const originalText = element.textContent;
+                    element.textContent = '✓ คัดลอกแล้ว!';
+                    element.style.color = '#10b981';
+                    setTimeout(() => {
+                        element.textContent = originalText;
+                        element.style.color = '';
+                    }, 2000);
+                });
+            }
+        }
 
         // อ่าน query parameter จาก URL
         function getQueryParam(param) {
