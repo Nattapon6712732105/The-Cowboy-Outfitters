@@ -30,9 +30,26 @@ class Product(models.Model):
     
     def save(self, *args, **kwargs):
         if not self.product_id:
-            # สร้าง product_id แบบอัตโนมัติ เช่น PRD-001
-            count = Product.objects.count() + 1
-            self.product_id = f'PRD-{count:03d}'
+            # สร้าง product_id แบบอัตโนมัติ เช่น PRD-001, PRD-002, ...
+            # หาหมายเลข product_id ที่มีค่ามากที่สุด
+            try:
+                last_product = Product.objects.filter(product_id__startswith='PRD-').order_by('-product_id').first()
+                if last_product:
+                    # ดึงหมายเลขจาก product_id เช่น "PRD-005" -> 5
+                    last_num = int(last_product.product_id.split('-')[1])
+                    new_num = last_num + 1
+                else:
+                    new_num = 1
+            except (ValueError, IndexError):
+                new_num = 1
+            
+            # สร้าง product_id ใหม่
+            while True:
+                self.product_id = f'PRD-{new_num:03d}'
+                # ตรวจสอบว่า product_id นี้มีอยู่แล้วหรือไม่
+                if not Product.objects.filter(product_id=self.product_id).exists():
+                    break
+                new_num += 1
         
         super().save(*args, **kwargs)
     

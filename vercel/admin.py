@@ -1,5 +1,23 @@
 from django.contrib import admin
-from .models import Employee, Customer, Order
+from .models import Employee, Customer, Order, Product
+
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ('product_id', 'name', 'category', 'price', 'stock', 'is_active', 'created_at')
+    list_filter = ('category', 'is_active', 'created_at')
+    search_fields = ('product_id', 'name', 'description')
+    readonly_fields = ('product_id', 'created_at', 'updated_at')
+    fieldsets = (
+        ('ข้อมูลสินค้า', {
+            'fields': ('product_id', 'name', 'category', 'price', 'stock', 'is_active')
+        }),
+        ('รายละเอียด', {
+            'fields': ('description', 'image')
+        }),
+        ('การจัดการ', {
+            'fields': ('created_by', 'created_at', 'updated_at')
+        }),
+    )
 
 @admin.register(Employee)
 class EmployeeAdmin(admin.ModelAdmin):

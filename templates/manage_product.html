@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}จัดการสินค้า - CowboyShop{% endblock %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการสินค้า - CowboyShop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Sarabun', sans-serif; }</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-amber-800 to-amber-900 text-white p-6 shadow-lg">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <i data-lucide="package" class="h-8 w-8 mr-3"></i>
+                    <h1 class="text-3xl font-bold">จัดการสินค้า</h1>
+                </div>
+                <a href="/add-product" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium flex items-center transition">
+                    <i data-lucide="plus" class="h-4 w-4 mr-2"></i> เพิ่มสินค้าใหม่
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        {% if products %}
+            <!-- Products Table -->
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <table class="w-full">
+                    <thead class="bg-amber-100">
+                        <tr>
+                            <th class="px-6 py-3 text-left font-semibold text-amber-900">รหัสสินค้า</th>
+                            <th class="px-6 py-3 text-left font-semibold text-amber-900">ชื่อสินค้า</th>
+                            <th class="px-6 py-3 text-left font-semibold text-amber-900">หมวดหมู่</th>
+                            <th class="px-6 py-3 text-left font-semibold text-amber-900">ราคา</th>
+                            <th class="px-6 py-3 text-left font-semibold text-amber-900">จำนวนคงเหลือ</th>
+                            <th class="px-6 py-3 text-left font-semibold text-amber-900">สถานะ</th>
+                            <th class="px-6 py-3 text-center font-semibold text-amber-900">จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        {% for product in products %}
+                            <tr class="hover:bg-gray-50 transition">
+                                <td class="px-6 py-3 font-mono text-sm text-gray-600">{{ product.product_id }}</td>
+                                <td class="px-6 py-3 font-medium text-gray-900">{{ product.name }}</td>
+                                <td class="px-6 py-3">
+                                    <span class="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm font-medium">
+                                        {{ product.get_category_display }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-3 font-semibold text-amber-800">฿{{ product.price|floatformat:2 }}</td>
+                                <td class="px-6 py-3 text-center">
+                                    {% if product.stock > 0 %}
+                                        <span class="text-green-600 font-semibold">{{ product.stock }}</span>
+                                    {% else %}
+                                        <span class="text-red-600 font-semibold">หมด</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-3">
+                                    {% if product.is_active %}
+                                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">เปิดใช้งาน</span>
+                                    {% else %}
+                                        <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium">ปิดใช้งาน</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-3 text-center">
+                                    <button onclick="confirmDelete('{{ product.product_id }}', '{{ product.name }}')" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg transition inline-flex items-center">
+                                        <i data-lucide="trash-2" class="h-4 w-4 mr-1"></i> ลบ
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-4 text-gray-600">
+                <p>รวม {{ products.count }} รายการ</p>
+            </div>
+        {% else %}
+            <div class="bg-white rounded-lg shadow-lg p-12 text-center">
+                <i data-lucide="inbox" class="h-16 w-16 text-gray-300 mx-auto mb-4"></i>
+                <p class="text-gray-500 text-lg">ไม่มีสินค้า</p>
+                <a href="/add-product" class="mt-4 inline-block bg-amber-700 hover:bg-amber-800 text-white px-6 py-2 rounded-lg font-medium transition">
+                    เพิ่มสินค้าแรก
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        function confirmDelete(productId, productName) {
+            if (confirm(`คุณแน่ใจหรือว่าต้องการลบสินค้า "${productName}"?`)) {
+                deleteProduct(productId);
+            }
+        }
+
+        function deleteProduct(productId) {
+            fetch(`/delete-product/${productId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    location.reload();
+                } else {
+                    alert(data.message || 'เกิดข้อผิดพลาด');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('เกิดข้อผิดพลาด: ' + error);
+            });
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+
+</body>
+{% endblock %}

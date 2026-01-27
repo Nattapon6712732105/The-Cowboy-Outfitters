@@ -416,3 +416,50 @@ def cancel_booking(request, booking_id):
     except Exception as e:
         return JsonResponse({'success': False, 'message': f'เกิดข้อผิดพลาด: {str(e)}'})
 
+
+@login_required(login_url='/employee')
+@require_http_methods(["POST", "DELETE"])
+def delete_product(request, product_id):
+    """ลบสินค้า - เฉพาะพนักงาน"""
+    try:
+        product = Product.objects.get(product_id=product_id)
+        
+        # ตรวจสอบว่าเป็นผู้สร้างหรือพนักงาน
+        try:
+            employee = Employee.objects.get(user=request.user)
+            # พนักงานสามารถลบได้
+        except Employee.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'เฉพาะพนักงานเท่านั้นที่ลบได้'}, status=403)
+        
+        product.delete()
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': True, 'message': f'ลบสินค้า {product.name} สำเร็จ'})
+        else:
+            return redirect('/product')
+    
+    except Product.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'ไม่พบสินค้านี้'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': f'เกิดข้อผิดพลาด: {str(e)}'}, status=500)
+
+
+@login_required(login_url='/employee')
+@require_http_methods(["GET"])
+def manage_product(request):
+    """หน้าจัดการสินค้า - เฉพาะพนักงาน"""
+    # ตรวจสอบว่าเป็นพนักงานหรือ admin
+    try:
+        Employee.objects.get(user=request.user)
+    except Employee.DoesNotExist:
+        # ถ้าไม่ใช่พนักงาน ลองตรวจสอบ is_staff
+        if not request.user.is_staff:
+            return redirect('/employee-login')
+    
+    # ดึงสินค้าทั้งหมด
+    products = Product.objects.all().order_by('-created_at')
+    
+    context = {
+        'products': products,
+    }
+    return render(request, "manage_product.html", context)
