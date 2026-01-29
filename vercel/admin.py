@@ -1,5 +1,56 @@
 from django.contrib import admin
-from .models import Employee, Customer, Order, Product
+from django.db.models import Sum, Count, Q
+from .models import Employee, Customer, Order, Product, ContactMessage
+
+
+# Customize Admin Site
+admin.site.site_header = "CowboyShop - ระบบจัดการ"
+admin.site.site_title = "CowboyShop Admin"
+admin.site.index_title = "ยินดีต้อนรับเข้าสู่ Admin Panel"
+
+
+# Dashboard Admin Class
+class CowboyAdminSite(admin.AdminSite):
+    def index(self, request, extra_context=None):
+        """แสดง Dashboard ที่หน้า admin"""
+        # คำนวณสถิติ
+        total_orders = Order.objects.count()
+        total_sales = Order.objects.aggregate(Sum('total_price'))['total_price__sum'] or 0
+        total_customers = Customer.objects.count()
+        total_products = Product.objects.count()
+        unread_messages = ContactMessage.objects.filter(is_read=False).count()
+        
+        # สถิติตามสถานะ
+        pending_orders = Order.objects.filter(status='pending').count()
+        approved_orders = Order.objects.filter(status='approved').count()
+        shipped_orders = Order.objects.filter(status='shipped').count()
+        completed_orders = Order.objects.filter(status='completed').count()
+        
+        # ยอดขายเมื่อไม่นี้ (7 วันล่าสุด)
+        from django.utils import timezone
+        from datetime import timedelta
+        week_ago = timezone.now() - timedelta(days=7)
+        recent_sales = Order.objects.filter(created_at__gte=week_ago).aggregate(Sum('total_price'))['total_price__sum'] or 0
+        
+        extra_context = extra_context or {}
+        extra_context.update({
+            'total_orders': total_orders,
+            'total_sales': f"{total_sales:,.2f}",
+            'total_customers': total_customers,
+            'total_products': total_products,
+            'unread_messages': unread_messages,
+            'pending_orders': pending_orders,
+            'approved_orders': approved_orders,
+            'shipped_orders': shipped_orders,
+            'completed_orders': completed_orders,
+            'recent_sales': f"{recent_sales:,.2f}",
+        })
+        
+        return super().index(request, extra_context)
+
+
+# สร้าง admin site ใหม่
+cowboy_admin_site = CowboyAdminSite(name='cowboy_admin')
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -77,3 +128,44 @@ class OrderAdmin(admin.ModelAdmin):
             except Employee.DoesNotExist:
                 pass
         super().save_model(request, obj, form, change)
+
+@admin.register(ContactMessage)
+class ContactMessageAdmin(admin.ModelAdmin):
+    list_display = ('name', 'email', 'subject', 'is_read', 'created_at')
+    list_filter = ('is_read', 'created_at')
+    search_fields = ('name', 'email', 'subject', 'message', 'phone')
+    readonly_fields = ('created_at', 'name', 'email', 'phone', 'subject', 'message')
+    
+    fieldsets = (
+        ('ข้อมูลผู้ติดต่อ', {
+            'fields': ('name', 'email', 'phone')
+        }),
+        ('เนื้อหา', {
+            'fields': ('subject', 'message')
+        }),
+        ('สถานะ', {
+            'fields': ('is_read', 'created_at')
+        }),
+    )
+    
+    def has_add_permission(self, request):
+        """ไม่อนุญาตให้เพิ่มข้อความผ่าน admin"""
+        return False
+    
+    def has_delete_permission(self, request, obj=None):
+        """เฉพาะ admin เท่านั้นที่ลบได้"""
+        return request.user.is_superuser
+    
+    actions = ['mark_as_read', 'mark_as_unread']
+    
+    def mark_as_read(self, request, queryset):
+        """ทำเครื่องหมายว่าอ่านแล้ว"""
+        updated = queryset.update(is_read=True)
+        self.message_user(request, f'ทำเครื่องหมายให้ {updated} ข้อความเป็น อ่านแล้ว')
+    mark_as_read.short_description = 'ทำเครื่องหมายว่าอ่านแล้ว'
+    
+    def mark_as_unread(self, request, queryset):
+        """ทำเครื่องหมายว่ายังไม่อ่าน"""
+        updated = queryset.update(is_read=False)
+        self.message_user(request, f'ทำเครื่องหมายให้ {updated} ข้อความเป็น ยังไม่อ่าน')
+    mark_as_unread.short_description = 'ทำเครื่องหมายว่ายังไม่อ่าน'

@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
-from .models import Order, Customer, Employee, Booking, Product
+from .models import Order, Customer, Employee, Booking, Product, ContactMessage
 from django.utils import timezone
 
 # Create your views here.
@@ -210,7 +210,38 @@ def create_order(request):
 
 def chat(request):
     """หน้า Contact - ไม่ต้องล็อกอิน"""
+    if request.method == "POST":
+        name = request.POST.get('name', '').strip()
+        email = request.POST.get('email', '').strip()
+        phone = request.POST.get('phone', '').strip()
+        subject = request.POST.get('subject', '').strip()
+        message = request.POST.get('message', '').strip()
+        
+        # ตรวจสอบข้อมูล
+        if not all([name, email, subject, message]):
+            return render(request, "chat.html", {'error': 'กรุณากรอกข้อมูลให้ครบถ้วน'})
+        
+        try:
+            # บันทึกข้อความติดต่อ
+            contact = ContactMessage.objects.create(
+                name=name,
+                email=email,
+                phone=phone,
+                subject=subject,
+                message=message
+            )
+            
+            return render(request, "chat.html", {
+                'success': True,
+                'message': 'ส่งข้อความสำเร็จแล้ว! เราจะติดต่อคุณโดยเร็วที่สุด'
+            })
+        except Exception as e:
+            return render(request, "chat.html", {
+                'error': f'เกิดข้อผิดพลาด: {str(e)}'
+            })
+    
     return render(request, "chat.html")
+
 
 @login_required(login_url='/login')
 def shop(request):

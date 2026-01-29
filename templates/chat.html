@@ -25,10 +25,9 @@
                     <span class="font-serif text-2xl font-bold tracking-wider text-amber-100">COWBOY<span class="text-amber-400">SHOP</span></span>
                 </a>
                 <div class="hidden md:flex items-center space-x-4">
-                    <a href="/" class="flex items-center px-4 py-2 rounded-md text-sm font-medium text-amber-200 hover:bg-amber-800 hover:text-white transition"><i data-lucide="home" class="h-4 w-4 mr-2"></i> หน้าแรก</a>
-                    <a href="/product" class="flex items-center px-4 py-2 rounded-md text-sm font-medium text-amber-200 hover:bg-amber-800 hover:text-white transition"><i data-lucide="shopping-bag" class="h-4 w-4 mr-2"></i> สินค้า</a>
-                    <a href="/chat" class="flex items-center px-4 py-2 rounded-md text-sm font-medium bg-amber-800 text-white shadow-inner border border-amber-700"><i data-lucide="phone" class="h-4 w-4 mr-2"></i> ติดต่อพนักงาน</a>
-                    <a href="/login" class="flex items-center px-4 py-2 rounded-md text-sm font-medium text-amber-200 hover:bg-amber-800 hover:text-white transition"><i data-lucide="user" class="h-4 w-4 mr-2"></i> เข้าสู่ระบบ</a>
+                    <a href="/" class="flex items-center px-4 py-2 rounded-md text-sm font-medium text-amber-200 hover:bg-amber-800 hover:text-white transition"><i data-lucide="home" class="h-4 w-4 mr-2"></i> </a>
+                    <a href="/product" class="flex items-center px-4 py-2 rounded-md text-sm font-medium text-amber-200 hover:bg-amber-800 hover:text-white transition"><i data-lucide="shopping-bag" class="h-4 w-4 mr-2"></i> </a>
+                    <a href="/chat" class="flex items-center px-4 py-2 rounded-md text-sm font-medium bg-amber-800 text-white shadow-inner border border-amber-700"><i data-lucide="phone" class="h-4 w-4 mr-2"></i> </a>
                 </div>
             </div>
         </div>
@@ -83,26 +82,39 @@
             <!-- Contact Form -->
             <div class="bg-white shadow-2xl rounded-xl p-8 border border-amber-200">
                 <h2 class="text-2xl font-bold text-gray-800 mb-6">ส่งข้อความถึงเรา</h2>
-                <form class="space-y-4">
+                {% if success %}
+                <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-4 flex items-center">
+                    <i data-lucide="check-circle" class="w-5 h-5 mr-2"></i>
+                    {{ message }}
+                </div>
+                {% endif %}
+                {% if error %}
+                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 flex items-center">
+                    <i data-lucide="alert-circle" class="w-5 h-5 mr-2"></i>
+                    {{ error }}
+                </div>
+                {% endif %}
+                <form method="POST" class="space-y-4">
+                    {% csrf_token %}
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">ชื่อ *</label>
-                        <input type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none" placeholder="กรุณาระบุชื่อของคุณ">
+                        <input type="text" name="name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none" placeholder="กรุณาระบุชื่อของคุณ">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">อีเมล *</label>
-                        <input type="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none" placeholder="example@email.com">
+                        <input type="email" name="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none" placeholder="example@email.com">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">เบอร์โทรศัพท์</label>
-                        <input type="tel" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none" placeholder="0991234567">
+                        <input type="tel" name="phone" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none" placeholder="0991234567">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">หัวข้อ *</label>
-                        <input type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none" placeholder="เรื่องที่ต้องการติดต่อ">
+                        <input type="text" name="subject" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none" placeholder="เรื่องที่ต้องการติดต่อ">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">ข้อความ *</label>
-                        <textarea required rows="5" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none" placeholder="ระบุรายละเอียดของปัญหาหรือคำถาม..."></textarea>
+                        <textarea name="message" required rows="5" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none" placeholder="ระบุรายละเอียดของปัญหาหรือคำถาม..."></textarea>
                     </div>
                     <button type="submit" class="w-full bg-amber-800 hover:bg-amber-900 text-white font-bold py-3 px-4 rounded-lg transition transform hover:scale-105">
                         <i data-lucide="send" class="inline w-5 h-5 mr-2"></i>
