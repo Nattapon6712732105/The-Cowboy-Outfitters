@@ -25,6 +25,18 @@ def product(request):
     }
     return render(request, "cat.html", context)
 
+@require_http_methods(["GET"])
+def product_detail(request, product_id):
+    """แสดงรายละเอียดของสินค้า"""
+    try:
+        product = Product.objects.get(product_id=product_id, is_active=True)
+        context = {
+            'product': product,
+        }
+        return render(request, "product_detail.html", context)
+    except Product.DoesNotExist:
+        return render(request, "404.html", {'message': 'ไม่พบสินค้านี้'}, status=404)
+
 def employee(request):
     return render(request, "employee.html")
 
@@ -206,7 +218,17 @@ def create_order(request):
         except Exception as e:
             return JsonResponse({'success': False, 'message': f'เกิดข้อผิดพลาด: {str(e)}'})
     
-    return render(request, "shop.html")
+    # GET request - แสดง form
+    product_name = request.GET.get('product_name', '')
+    unit_price = request.GET.get('unit_price', '')
+    product_id = request.GET.get('product_id', '')
+    
+    context = {
+        'product_name': product_name,
+        'unit_price': unit_price,
+        'product_id': product_id,
+    }
+    return render(request, "shop.html", context)
 
 def chat(request):
     """หน้า Contact - ไม่ต้องล็อกอิน"""

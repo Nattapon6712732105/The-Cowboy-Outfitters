@@ -126,9 +126,11 @@
             {% for p in products %}
             { 
                 id: {{ p.id }}, 
+                product_id: "{{ p.product_id }}",
                 name: "{{ p.name }}", 
                 category: "{{ p.get_category_display }}", 
                 price: {{ p.price }}, 
+                discount: {{ p.discount_percent }},
                 image: "{% if p.image %}{{ p.image.url }}{% else %}https://images.unsplash.com/photo-1599596373756-3c58b4566c1b?auto=format&fit=crop&q=80&w=800{% endif %}", 
                 desc: "{{ p.description|truncatewords:15 }}" 
             },
@@ -151,6 +153,7 @@
                     <div class="relative h-64 overflow-hidden">
                         <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
                         <div class="absolute top-4 right-4 bg-amber-600 text-white text-xs font-bold px-2 py-1 rounded shadow">${p.category}</div>
+                        ${p.discount > 0 ? `<div class="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded shadow">-${p.discount}%</div>` : ''}
                     </div>
                     <div class="p-6 flex-1 flex flex-col">
                         <h3 class="text-xl font-bold text-gray-900 mb-2">${p.name}</h3>
@@ -158,12 +161,15 @@
                         <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
                             <span class="text-2xl font-bold text-amber-800">฿${p.price.toLocaleString()}</span>
                         </div>
-                        <div class="mt-4 grid grid-cols-2 gap-3">
-                            <button onclick="buyProduct('${p.name}', ${p.price})" class="flex items-center justify-center bg-amber-700 hover:bg-amber-800 text-white py-2 px-4 rounded font-medium transition-colors">
-                                <i data-lucide="shopping-cart" class="w-4 h-4 mr-1"></i> ซื้อเลย
+                        <div class="mt-4 grid grid-cols-3 gap-2">
+                            <button onclick="viewProductDetail('${p.product_id}')" class="flex items-center justify-center bg-amber-600 hover:bg-amber-700 text-white py-2 px-3 rounded font-medium transition-colors text-sm">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
                             </button>
-                            <button onclick="bookProduct('${p.name}', ${p.price})" class="flex items-center justify-center bg-transparent border-2 border-amber-700 text-amber-900 hover:bg-amber-50 py-2 px-4 rounded font-medium transition-colors">
-                                <i data-lucide="clock" class="w-4 h-4 mr-1"></i> จอง
+                            <button onclick="buyProduct('${p.name}', ${p.price})" class="flex items-center justify-center bg-amber-700 hover:bg-amber-800 text-white py-2 px-3 rounded font-medium transition-colors text-sm">
+                                <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="bookProduct('${p.name}', ${p.price})" class="flex items-center justify-center bg-amber-600 hover:bg-amber-700 text-white py-2 px-3 rounded font-medium transition-colors text-sm">
+                                <i data-lucide="clock" class="w-4 h-4"></i>
                             </button>
                         </div>
                     </div>
@@ -199,6 +205,11 @@
         // จองสินค้า
         function bookProduct(productName, price) {
             window.location.href = `/booking?product=${encodeURIComponent(productName)}&price=${price}`;
+        }
+
+        // ดูรายละเอียดสินค้า
+        function viewProductDetail(productId) {
+            window.location.href = `/product/${productId}`;
         }
     </script>
 </body>

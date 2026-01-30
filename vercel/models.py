@@ -17,6 +17,7 @@ class Product(models.Model):
     name = models.CharField(max_length=200)
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    discount_percent = models.DecimalField(max_digits=5, decimal_places=2, default=0, help_text="ลดราคาเป็นเปอร์เซ็นต์ (0-100)")
     description = models.TextField(blank=True)
     image = models.ImageField(upload_to='products/', null=True, blank=True)
     stock = models.IntegerField(default=0)
@@ -28,7 +29,25 @@ class Product(models.Model):
     def __str__(self):
         return f"{self.product_id} - {self.name}"
     
+    def get_discounted_price(self):
+        """คำนวณราคาหลังลดราคา"""
+        if self.discount_percent > 0:
+            discount_amount = self.price * (self.discount_percent / 100)
+            return self.price - discount_amount
+        return self.price
+    get_discounted_price.short_description = "ราคาหลังลดราคา"
+    
+    def get_discount_amount(self):
+        """คำนวณจำนวนเงินที่ลดราคา"""
+        if self.discount_percent > 0:
+            return self.price * (self.discount_percent / 100)
+        return 0
+    get_discount_amount.short_description = "จำนวนเงินลด"
+    
     def save(self, *args, **kwargs):
+        # ตรวจสอบค่า discount_percent
+        if self.discount_percent < 0 or self.discount_percent > 100:
+            raise ValueError("ส่วนลดต้องเป็นระหว่าง 0 ถึง 100 เปอร์เซ็นต์")
         if not self.product_id:
             # สร้าง product_id แบบอัตโนมัติ เช่น PRD-001, PRD-002, ...
             # หาหมายเลข product_id ที่มีค่ามากที่สุด

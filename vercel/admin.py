@@ -3,14 +3,12 @@ from django.db.models import Sum, Count, Q
 from .models import Employee, Customer, Order, Product, ContactMessage
 
 
-# Customize Admin Site
-admin.site.site_header = "CowboyShop - ระบบจัดการ"
-admin.site.site_title = "CowboyShop Admin"
-admin.site.index_title = "ยินดีต้อนรับเข้าสู่ Admin Panel"
-
-
 # Dashboard Admin Class
 class CowboyAdminSite(admin.AdminSite):
+    site_header = "CowboyShop - ระบบจัดการ"
+    site_title = "CowboyShop Admin"
+    index_title = "ยินดีต้อนรับเข้าสู่ Admin Panel"
+    
     def index(self, request, extra_context=None):
         """แสดง Dashboard ที่หน้า admin"""
         # คำนวณสถิติ
@@ -52,15 +50,14 @@ class CowboyAdminSite(admin.AdminSite):
 # สร้าง admin site ใหม่
 cowboy_admin_site = CowboyAdminSite(name='cowboy_admin')
 
-@admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('product_id', 'name', 'category', 'price', 'stock', 'is_active', 'created_at')
+    list_display = ('product_id', 'name', 'category', 'price', 'discount_percent', 'stock', 'is_active', 'created_at')
     list_filter = ('category', 'is_active', 'created_at')
     search_fields = ('product_id', 'name', 'description')
     readonly_fields = ('product_id', 'created_at', 'updated_at')
     fieldsets = (
         ('ข้อมูลสินค้า', {
-            'fields': ('product_id', 'name', 'category', 'price', 'stock', 'is_active')
+            'fields': ('product_id', 'name', 'category', 'price', 'discount_percent', 'stock', 'is_active')
         }),
         ('รายละเอียด', {
             'fields': ('description', 'image')
@@ -70,21 +67,24 @@ class ProductAdmin(admin.ModelAdmin):
         }),
     )
 
-@admin.register(Employee)
+cowboy_admin_site.register(Product, ProductAdmin)
+
 class EmployeeAdmin(admin.ModelAdmin):
     list_display = ('employee_id', 'user', 'phone', 'department', 'created_at')
     list_filter = ('department', 'created_at')
     search_fields = ('employee_id', 'user__username', 'user__first_name')
     readonly_fields = ('created_at',)
 
-@admin.register(Customer)
+cowboy_admin_site.register(Employee, EmployeeAdmin)
+
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ('user', 'phone', 'created_at')
     list_filter = ('created_at',)
     search_fields = ('user__username', 'user__email', 'phone')
     readonly_fields = ('created_at',)
 
-@admin.register(Order)
+cowboy_admin_site.register(Customer, CustomerAdmin)
+
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('order_id', 'customer_name', 'product_name', 'quantity', 'total_price', 'status', 'created_at')
     list_filter = ('status', 'created_at')
@@ -129,7 +129,8 @@ class OrderAdmin(admin.ModelAdmin):
                 pass
         super().save_model(request, obj, form, change)
 
-@admin.register(ContactMessage)
+cowboy_admin_site.register(Order, OrderAdmin)
+
 class ContactMessageAdmin(admin.ModelAdmin):
     list_display = ('name', 'email', 'subject', 'is_read', 'created_at')
     list_filter = ('is_read', 'created_at')
@@ -169,3 +170,5 @@ class ContactMessageAdmin(admin.ModelAdmin):
         updated = queryset.update(is_read=False)
         self.message_user(request, f'ทำเครื่องหมายให้ {updated} ข้อความเป็น ยังไม่อ่าน')
     mark_as_unread.short_description = 'ทำเครื่องหมายว่ายังไม่อ่าน'
+
+cowboy_admin_site.register(ContactMessage, ContactMessageAdmin)
